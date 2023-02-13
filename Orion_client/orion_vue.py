@@ -2,6 +2,7 @@
 ##  version 2022 14 mars - jmd
 
 from tkinter import *
+from tkinter import ttk
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
@@ -104,9 +105,19 @@ class Vue():
 
         # bouton pour lancer la partie, uniquement accessible à celui qui a creer la partie dans le splash
         self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie)
+        
+        #! Eric
+        self.liste_options_temps = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+        self.options_temps = ttk.Combobox(values=self.liste_options_temps, state="normal")
+        self.options_temps.current(0)
+        #!self.label_temps = Label(text="Durée de la partie en minutes")
+        #! Fin Eric
+        
         # affichage des widgets dans le canevaslobby (similaire au splash)
         self.canevaslobby.create_window(440, 240, window=self.listelobby, width=200, height=400)
         self.canevaslobby.create_window(200, 400, window=self.btnlancerpartie, width=100, height=30)
+        self.canevaslobby.create_window(200, 200, window=self.options_temps, width=100, height=30)
+        #!self.canevaslobby.create_window(200, 180, window=self.label_temps, width=100, height=30)
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrelobby
 
