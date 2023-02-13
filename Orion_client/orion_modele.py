@@ -156,7 +156,7 @@ class Joueur():
             if idori in self.flotte[i]:
                 ori = self.flotte[i][idori]
 
-        if ori:
+        # if ori: # deplacements entre des objets avec des id
             if type_cible == "Etoile":
                 for j in self.parent.etoiles:
                     if j.id == iddesti:
@@ -172,6 +172,8 @@ class Joueur():
                     if cible:
                         ori.acquerir_cible(cible, type_cible)
                         return
+            else:
+                pass
 
     def jouer_prochain_coup(self):
         self.avancer_flotte()
