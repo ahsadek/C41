@@ -6,6 +6,7 @@ import json
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime
 
 from orion_modele import *
 from orion_vue import *
@@ -91,7 +92,7 @@ class Controleur():
             listejoueurs.append(i[0])
 
         self.modele = Modele(self,
-                             listejoueurs)  # on cree une partie pour les joueurs listes, qu'on conserve comme modele
+                             listejoueurs, self.vue.minutes)  # on cree une partie pour les joueurs listes, qu'on conserve comme modele
         self.vue.initialiser_avec_modele(self.modele)  # on fournit le modele et mets la vue à jour
         self.vue.changer_cadre("partie")  # on change le cadre la fenetre pour passer dans l'interface de jeu
 
@@ -144,6 +145,22 @@ class Controleur():
             except urllib.error.URLError as e:
                 print("ERREUR ", self.cadrejeu, e)
                 self.onjoue = 0
+
+        #timer
+        if self.cadrejeu == 1:
+            last_time = datetime.now()
+        else:
+            last_time = self.modele.current_time
+
+        current_time = datetime.now()
+
+        time_since = current_time - last_time
+        time_since = time_since.total_seconds()
+
+        self.modele.current_time = current_time
+
+        self.vue.update_cadre_timer(time_since)
+
 
         # le reste du tour vers modele et vers vue, s'il y a lieu
         if self.onjoue:

@@ -13,6 +13,8 @@ import random
 
 class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
+        self.minutes = None
+        self.secondes = 00
         self.parent = parent
         self.root = Tk()
         self.root.title("Je suis " + mon_nom)
@@ -110,9 +112,9 @@ class Vue():
         self.liste_options_temps = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
         self.options_temps = ttk.Combobox(values=self.liste_options_temps, state="normal")
         self.options_temps.current(0)
+        self.options_temps.bind("<<ComboboxSelected>>", self.update_timer)
         self.label_temps = Label(text="Durée de la partie en minutes :")
 
-        option_choisie = self.options_temps.get()
         #! Fin Eric
         
         # affichage des widgets dans le canevaslobby (similaire au splash)
@@ -122,6 +124,10 @@ class Vue():
         self.canevaslobby.create_window(200, 170, window=self.label_temps, width=200, height=30)
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrelobby
+
+    def update_timer(self, event):
+        self.minutes = self.options_temps.get()
+        print(self.minutes)
 
     def creer_cadre_partie(self):
         self.cadrepartie = Frame(self.cadre_app, width=600, height=200, bg="yellow")
@@ -158,6 +164,15 @@ class Vue():
 
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
         return self.cadrepartie
+
+    def update_cadre_timer(self, time_since):
+        if time_since > self.secondes:
+            self.minutes -= 1
+            time_since -= self.secondes
+            self.secondes = 60
+
+        self.secondes -= time_since
+        self.cadre_timer.config(text=str(self.secondes))
 
     def creer_cadre_outils(self):
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")
@@ -203,6 +218,9 @@ class Vue():
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
+
+        self.cadre_timer = Label(self.cadrepartie, text=str(self.secondes))
+        self.cadre_timer.pack(side=RIGHT)
 
         self.cadres["jeu"] = self.cadrepartie
         # fonction qui affiche le nombre d'items sur le jeu

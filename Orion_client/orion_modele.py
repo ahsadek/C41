@@ -218,7 +218,7 @@ class IA(Joueur):
 
 
 class Modele():
-    def __init__(self, parent, joueurs):
+    def __init__(self, parent, joueurs, selected_timer):
         self.parent = parent
         self.largeur = 9000
         self.hauteur = 9000
@@ -231,6 +231,8 @@ class Modele():
         self.creeretoiles(joueurs, 1)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
+        self.timer = selected_timer
+        self.current_time = None
 
     def creer_troudevers(self, n):
         bordure = 10
