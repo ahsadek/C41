@@ -110,14 +110,16 @@ class Vue():
         self.liste_options_temps = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
         self.options_temps = ttk.Combobox(values=self.liste_options_temps, state="normal")
         self.options_temps.current(0)
-        #!self.label_temps = Label(text="Durée de la partie en minutes")
+        self.label_temps = Label(text="Durée de la partie en minutes :")
+
+        option_choisie = self.options_temps.get()
         #! Fin Eric
         
         # affichage des widgets dans le canevaslobby (similaire au splash)
         self.canevaslobby.create_window(440, 240, window=self.listelobby, width=200, height=400)
         self.canevaslobby.create_window(200, 400, window=self.btnlancerpartie, width=100, height=30)
         self.canevaslobby.create_window(200, 200, window=self.options_temps, width=100, height=30)
-        #!self.canevaslobby.create_window(200, 180, window=self.label_temps, width=100, height=30)
+        self.canevaslobby.create_window(200, 170, window=self.label_temps, width=200, height=30)
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrelobby
 
