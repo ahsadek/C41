@@ -18,7 +18,6 @@ class Controleur():
         self.cadrejeu = 0  # compte les tours dans la boucle de jeu (bouclersurjeu)
         self.actionsrequises = []  # les actions envoyées au serveur
         self.joueurs = []  # liste des noms de joueurs pour le lobby
-
         self.prochainsplash = None  # requis pour sortir de cette boucle et passer au lobby du jeu
         self.onjoue = 1  # indicateur que le jeu se poursuive - sinon on attend qu'un autre joueur nous rattrape
         self.maindelai = 50  # delai en ms de la boucle de jeu
@@ -28,7 +27,6 @@ class Controleur():
         self.modele = None  # la variable contenant la partie, après initialiserpartie()
         self.vue = Vue(self, self.urlserveur, self.mon_nom,
                        "Non connecté")  # la vue pour l'affichage et les controles du jeu
-
         self.vue.root.mainloop()  # la boucle des evenements (souris, click, clavier)
 
     ######################################################################################################

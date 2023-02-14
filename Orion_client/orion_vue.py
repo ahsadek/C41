@@ -17,7 +17,7 @@ class Vue():
         self.root.title("Je suis " + mon_nom)
         self.mon_nom = mon_nom
         # attributs
-        self.taille_minimap = 240
+        self.taille_minimap = 240 # 240 quoi?
         self.zoom = 2
         self.ma_selection = None
         self.cadre_actif = None
