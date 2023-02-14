@@ -2,6 +2,8 @@
 ##  version 2022 14 mars - jmd
 ##  version  janvier 2023
 #     enlever import inutile
+
+#test icitte
 import json
 import urllib.error
 import urllib.parse
