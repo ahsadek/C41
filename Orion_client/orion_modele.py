@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 ##  version 2022 14 mars - jmd
 
+import tkinter as tk
 import random
 import ast
 from id import *
@@ -38,6 +39,7 @@ class Trou_de_vers():
 
 class Etoile():
     def __init__(self, parent, x, y):
+        # self.image = tk.PhotoImage(file='images/star.png')
         self.id = get_prochain_id()
         self.parent = parent
         self.proprietaire = ""

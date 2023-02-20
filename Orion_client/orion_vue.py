@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 ##  version 2022 14 mars - jmd
-
 from tkinter import *
+import tkinter as tk
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
 import math
-
 import random
+from orion_modele import Etoile
 
 
 class Vue():
@@ -28,6 +28,8 @@ class Vue():
         self.cadres = {}
         self.creer_cadres(urlserveur, mon_nom, msg_initial)
         self.changer_cadre("splash")
+
+        self.imageEtoile = tk.PhotoImage(file='images/star.png').subsample(6,6)
         # PROTOCOLE POUR INTERCEPTER LA FERMETURE DU ROOT - qui termine l'application
         # self.root.protocol("WM_DELETE_WINDOW", self.demander_abandon)
 
@@ -313,6 +315,18 @@ class Vue():
             self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
                                      fill="grey80", outline=col,
                                      tags=(i.proprietaire, str(i.id), "Etoile",))
+            imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile) #, tags=(i.proprietaire, str(i.id), "Etoile")
+            self.canevas.itemconfig(imageEtoile, tags=(i.proprietaire, str(i.id), "Etoile"))
+            # recuperer dimensions image
+            imageEtoile_width = self.imageEtoile.width()
+            imageEtoile_height = self.imageEtoile.height()
+
+            # centrer image
+            image_x = i.x - imageEtoile_width / 2
+            image_y = i.y - imageEtoile_height / 2
+            # positioner image au centre
+            self.canevas.coords(imageEtoile, image_x, image_y)
+
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
@@ -361,12 +375,18 @@ class Vue():
         self.canevas.yview_moveto(pcty)
 
     # change l'appartenance d'une etoile et donc les propriétés des dessins les représentants
-    def afficher_etoile(self, joueur, cible):
+    def afficher_etoile(self, joueur, cible):   #FIX: rendre methode compatible avec les images au lieu des ovales... itemconfig source probleme? trouver facon de voir a qui appartient planete meme si image pareil
         joueur1 = self.modele.joueurs[joueur]
         id = cible.id
         couleur = joueur1.couleur
-        self.canevas.itemconfig(id, fill=couleur)
+
+        # self.canevas.canva.create_image(e.x, e.y, image=self.imageV)
+
+        # self.canevas.itemconfig(id, fill=couleur)
+        self.canevas.itemconfig(id, image=couleur)
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
+        # self.etoile = tkinter.PhotoImage(file="images/star.png").subsample(6, 6)
+        # self.canevas.create_image(0,0,image=self.etoile, anchor='nw')
 
     # ajuster la liste des vaisseaux
     def lister_objet(self, obj, id):
