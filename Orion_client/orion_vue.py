@@ -146,6 +146,37 @@ class Vue():
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
         return self.cadrepartie
 
+    def cliquer_cosmos(self, evt):
+        t = self.canevas.gettags(CURRENT)
+        if t:  # il y a des tags
+            if t[0] == self.mon_nom:  # l'etoile est le mien
+                self.ma_selection = [self.mon_nom, t[1], t[2]]
+                if t[2] == "Etoile":
+                    self.montrer_etoile_selection()
+                elif t[2] == "Flotte":
+                    self.montrer_flotte_selection()
+            elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
+                if self.ma_selection:
+                    self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
+                self.ma_selection = None
+                self.canevas.delete("marqueur")
+        else:  # si on n'a pas choisi une etoile (on veut se deplacer vers l'espace)
+            if self.ma_selection[2] == "Flotte": # si on a deja choisi un vaiseau pour avoir un point de depart
+                positionDestinationX = self.canevas.canvasx(evt.x)
+                positionDestinationY = self.canevas.canvasy(evt.y)
+                print(f'X: {positionDestinationX}')
+                print(f'Y: {positionDestinationY}')
+
+                self.parent.cibler_flotte_espace(self.ma_selection[1], positionDestinationX, positionDestinationY, "espace")
+                self.canevas.delete("marqueur")
+            else:
+                print("Vous devez choisir un point d'origine")
+
+        # else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
+        #     print("Region inconnue")
+        #     self.ma_selection = None
+        #     self.canevas.delete("marqueur")
+
     def creer_cadre_outils(self):
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")
         self.cadreoutils.pack(side=LEFT, fill=Y)
@@ -452,24 +483,6 @@ class Vue():
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
-    def cliquer_cosmos(self, evt):
-        t = self.canevas.gettags(CURRENT)
-        if t:  # il y a des tags
-            if t[0] == self.mon_nom:  # et
-                self.ma_selection = [self.mon_nom, t[1], t[2]]
-                if t[2] == "Etoile":
-                    self.montrer_etoile_selection()
-                elif t[2] == "Flotte":
-                    self.montrer_flotte_selection()
-            elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
-                if self.ma_selection:
-                    self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
-                self.ma_selection = None
-                self.canevas.delete("marqueur")
-        else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
-            print("Region inconnue")
-            self.ma_selection = None
-            self.canevas.delete("marqueur")
 
     def montrer_etoile_selection(self):
         self.cadreinfochoix.pack(fill=BOTH)
