@@ -231,8 +231,9 @@ class Modele():
         self.creeretoiles(joueurs, 1)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
-        self.timer = selected_timer
-        self.current_time = None
+        self.minutes = selected_timer
+        self.secondes = 00
+
 
     def creer_troudevers(self, n):
         bordure = 10

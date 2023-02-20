@@ -6,7 +6,8 @@ import json
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from threading import Timer
+
 
 from orion_modele import *
 from orion_vue import *
@@ -148,19 +149,15 @@ class Controleur():
 
         #timer
         if self.cadrejeu == 1:
-            last_time = datetime.now()
-        else:
-            last_time = self.modele.current_time
+            self.update_timer()
 
-        current_time = datetime.now()
-
-        time_since = current_time - last_time
-        time_since = time_since.total_seconds()
-
-        self.modele.current_time = current_time
-
-        self.vue.update_cadre_timer(time_since)
-
+        if self.vue.minutes != self.modele.minutes:
+            self.vue.minutes = self.modele.minutes
+            self.vue.update_cadre_timer()
+        if self.vue.secondes != self.modele.secondes:
+            self.vue.update_cadre_timer()
+            self.vue.secondes = self.modele.secondes
+        
 
         # le reste du tour vers modele et vers vue, s'il y a lieu
         if self.onjoue:
@@ -236,6 +233,16 @@ class Controleur():
     def lister_objet(self, objet, id):
         self.vue.lister_objet(objet, id)
 
+    #timer
+    def update_timer(self):
+        if self.modele.secondes > 0:
+            self.modele.secondes -= 1
+        else:
+            self.modele.minutes -= 1
+            self.modele.secondes = 59
+
+        self.boucle_timer = Timer(1.0, self.update_timer)
+        self.boucle_timer.start()
 
 if __name__ == "__main__":
     c = Controleur()

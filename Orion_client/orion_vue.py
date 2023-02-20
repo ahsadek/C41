@@ -13,7 +13,7 @@ import random
 
 class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
-        self.minutes = None
+        self.minutes = 10
         self.secondes = 00
         self.parent = parent
         self.root = Tk()
@@ -126,7 +126,7 @@ class Vue():
         return self.cadrelobby
 
     def update_timer(self, event):
-        self.minutes = self.options_temps.get()
+        self.minutes = int(self.options_temps.get())
         print(self.minutes)
 
     def creer_cadre_partie(self):
@@ -165,14 +165,8 @@ class Vue():
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
         return self.cadrepartie
 
-    def update_cadre_timer(self, time_since):
-        if time_since > self.secondes:
-            self.minutes -= 1
-            time_since -= self.secondes
-            self.secondes = 60
-
-        self.secondes -= time_since
-        self.cadre_timer.config(text=str(self.secondes))
+    def update_cadre_timer(self):
+        self.cadre_timer.config(text=(str(self.minutes) + ":" + str(self.secondes)))
 
     def creer_cadre_outils(self):
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")
@@ -219,8 +213,9 @@ class Vue():
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
 
-        self.cadre_timer = Label(self.cadrepartie, text=str(self.secondes))
-        self.cadre_timer.pack(side=RIGHT)
+        #timer
+        self.cadre_timer = Label(self.cadreoutils, text=(str(self.minutes) + ":" + str(self.secondes)), width=4, height=1, bg="pink")
+        self.cadre_timer.pack(side=BOTTOM)
 
         self.cadres["jeu"] = self.cadrepartie
         # fonction qui affiche le nombre d'items sur le jeu
