@@ -213,6 +213,13 @@ class Vue():
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
 
+        #cadre action etoile
+        self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
+        self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
+        self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
+
+        self.btn_scanner.pack()
+
         #timer
         self.cadre_timer = Label(self.cadreoutils, text=(str(self.minutes) + ":" + str(self.secondes)), width=4, height=1, bg="pink")
         self.cadre_timer.pack(side=BOTTOM)
@@ -480,6 +487,7 @@ class Vue():
 
     def cliquer_cosmos(self, evt):
         t = self.canevas.gettags(CURRENT)
+        self.cadre_actions_etoile.pack_forget()
         if t:  # il y a des tags
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
@@ -492,13 +500,21 @@ class Vue():
                     self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
                 self.ma_selection = None
                 self.canevas.delete("marqueur")
+
+            if t[0] == "" and t[2] == "Etoile":
+                self.montrer_actions_etoile()
+
         else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
             print("Region inconnue")
             self.ma_selection = None
             self.canevas.delete("marqueur")
 
+
     def montrer_etoile_selection(self):
         self.cadreinfochoix.pack(fill=BOTH)
+
+    def montrer_actions_etoile(self):
+        self.cadre_actions_etoile.pack(fill=BOTH)
 
     def montrer_flotte_selection(self):
         print("À IMPLANTER - FLOTTE de ", self.mon_nom)
