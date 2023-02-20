@@ -216,9 +216,12 @@ class Vue():
         #cadre action etoile
         self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
         self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
-        self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
-
         self.btn_scanner.pack()
+
+        # cadre info etoile
+        self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
+        self.champ_id = Label(self.cadre_info_etoile)
+        self.champ_id.pack()        
 
         #timer
         self.cadre_timer = Label(self.cadreoutils, text=(str(self.minutes) + ":" + str(self.secondes)), width=4, height=1, bg="pink")
@@ -227,6 +230,10 @@ class Vue():
         self.cadres["jeu"] = self.cadrepartie
         # fonction qui affiche le nombre d'items sur le jeu
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
+
+    def afficher_ressources(self, evt, id):
+        self.champ_id.config(text=("id : " + id))
+        self.cadre_info_etoile.pack()
 
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
@@ -488,6 +495,8 @@ class Vue():
     def cliquer_cosmos(self, evt):
         t = self.canevas.gettags(CURRENT)
         self.cadre_actions_etoile.pack_forget()
+        self.cadreinfochoix.pack_forget()
+        self.cadre_info_etoile.pack_forget()
         if t:  # il y a des tags
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
@@ -502,6 +511,7 @@ class Vue():
                 self.canevas.delete("marqueur")
 
             if t[0] == "" and t[2] == "Etoile":
+                self.btn_scanner.config(command= lambda: self.afficher_ressources(evt, t[1]))
                 self.montrer_actions_etoile()
 
         else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT

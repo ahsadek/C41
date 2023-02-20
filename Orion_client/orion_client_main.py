@@ -177,7 +177,7 @@ class Controleur():
         leurl = self.urlserveur + "/reset_jeu"
         reptext = self.appeler_serveur(leurl, 0)
         self.vue.update_splash(reptext[0][0])
-        return reptext
+        return reptext 
 
     #   retour de l'etat du serveur
     def tester_etat_serveur(self):
