@@ -311,11 +311,11 @@ class Vue():
         # affichage des etoiles
         for i in mod.etoiles:
             t = i.taille * self.zoom
-            self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
-                                     fill="grey80", outline=col,
-                                     tags=(i.proprietaire, str(i.id), "Etoile",))
             imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile) #, tags=(i.proprietaire, str(i.id), "Etoile")
             self.canevas.itemconfig(imageEtoile, tags=(i.proprietaire, str(i.id), "Etoile"))
+            self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
+                                     fill='', outline=col, width=1,
+                                     tags=(i.proprietaire, str(i.id), "Etoile",))
             # recuperer dimensions image
             imageEtoile_width = self.imageEtoile.width()
             imageEtoile_height = self.imageEtoile.height()
@@ -379,13 +379,8 @@ class Vue():
         id = cible.id
         couleur = joueur1.couleur
 
-        # self.canevas.canva.create_image(e.x, e.y, image=self.imageV)
-
-        # self.canevas.itemconfig(id, fill=couleur)
-        self.canevas.itemconfig(id, image=couleur)
+        self.canevas.itemconfig(id, fill=couleur)  # ligne du prof
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
-        # self.etoile = tkinter.PhotoImage(file="images/star.png").subsample(6, 6)
-        # self.canevas.create_image(0,0,image=self.etoile, anchor='nw')
 
     # ajuster la liste des vaisseaux
     def lister_objet(self, obj, id):

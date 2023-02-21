@@ -60,7 +60,7 @@ class Vaisseau():
         self.espace_cargo = 0
         self.energie = 100
         self.taille = 5
-        self.vitesse = 2
+        self.vitesse = 35
         self.cible = 0
         self.type_cible = None
         self.angle_cible = 0
