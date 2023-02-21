@@ -311,11 +311,12 @@ class Vue():
         # affichage des etoiles
         for i in mod.etoiles:
             t = i.taille * self.zoom
-            imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile) #, tags=(i.proprietaire, str(i.id), "Etoile")
-            self.canevas.itemconfig(imageEtoile, tags=(i.proprietaire, str(i.id), "Etoile"))
-            self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
-                                     fill='', outline=col, width=1,
+            imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile)
+            self.canevas.itemconfig(imageEtoile)
+            self.canevas.create_oval(i.x - t + 2, i.y - t + 2, i.x + t - 2, i.y + t - 2,
+                                     fill='', outline=col, width=4,
                                      tags=(i.proprietaire, str(i.id), "Etoile",))
+
             # recuperer dimensions image
             imageEtoile_width = self.imageEtoile.width()
             imageEtoile_height = self.imageEtoile.height()
@@ -323,6 +324,7 @@ class Vue():
             # centrer image
             image_x = i.x - imageEtoile_width / 2
             image_y = i.y - imageEtoile_height / 2
+
             # positioner image au centre
             self.canevas.coords(imageEtoile, image_x, image_y)
 
@@ -348,13 +350,13 @@ class Vue():
             self.canevas_minimap.create_rectangle(minix, miniy, minix + 0, miniy + 0,
                                                   fill="black",
                                                   tags=("mini", "Etoile"))
-        # # affichage des etoiles possedees par les joueurs
-        # for i in mod.joueurs.keys():
-        #     for j in mod.joueurs[i].etoilescontrolees:
-        #         t = j.taille * self.zoom
-        #         self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
-        #                                  fill=mod.joueurs[i].couleur,
-        #                                  tags=(j.proprietaire, str(j.id),  "Etoile"))
+        # affichage des etoiles possedees par les joueurs
+        for i in mod.joueurs.keys():
+            for j in mod.joueurs[i].etoilescontrolees:
+                t = j.taille * self.zoom
+                self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
+                                         fill=mod.joueurs[i].couleur,
+                                         tags=(j.proprietaire, str(j.id),  "Etoile"))
 
     def centrer_planemetemere(self, evt):
         self.centrer_objet(self.modele.joueurs[self.mon_nom].etoilemere)
@@ -379,7 +381,7 @@ class Vue():
         id = cible.id
         couleur = joueur1.couleur
 
-        self.canevas.itemconfig(id, fill=couleur)  # ligne du prof
+        self.canevas.itemconfig(id, outline=couleur)
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
 
     # ajuster la liste des vaisseaux
