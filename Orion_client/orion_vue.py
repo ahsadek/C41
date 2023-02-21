@@ -221,8 +221,8 @@ class Vue():
 
         # cadre info etoile
         self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
-        self.champ_id = Label(self.cadre_info_etoile)
-        self.champ_id.pack()        
+        self.champ_metal = Label(self.cadre_info_etoile)
+        self.champ_metal.pack()
 
         #timer
         self.cadre_timer = Label(self.cadreoutils, text=(str(self.minutes) + ":" + str(self.secondes)), width=4, height=1, bg="pink")
@@ -233,7 +233,13 @@ class Vue():
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
 
     def afficher_ressources(self, evt, id):
-        self.champ_id.config(text=("id : " + id))
+        i = 0
+        for etoile in self.modele.etoiles:
+            if etoile.id == id:
+                break
+            else:
+                i += 1
+        self.champ_metal.config(text=("Metal : " + str(self.modele.etoiles[i].ressources["metal"])))
         self.cadre_info_etoile.pack()
 
     def connecter_serveur(self):
