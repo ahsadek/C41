@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bd99e5ea-3cdd-41db-a10d-8b6ced164673" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/C41.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/C41.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Orion_client/orion_client_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Orion_client/orion_client_main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Orion_client/orion_modele.py" beforeDir="false" afterPath="$PROJECT_DIR$/Orion_client/orion_modele.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Orion_client/orion_vue.py" beforeDir="false" afterPath="$PROJECT_DIR$/Orion_client/orion_vue.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RTS_serveur/RTS_serveur_DB.db" beforeDir="false" afterPath="$PROJECT_DIR$/RTS_serveur/RTS_serveur_DB.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,9 +20,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/RTS_serveur/RTS_serveur_APP.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Orion_client/orion_modele.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file:////uranus.reseau.cvm/priveeleve/2170785/Session4/Genie Logiciel/Projet/C41/Orion_client/orion_vue.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Orion_client/orion_vue.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Orion_client/orion_modele.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Orion_client/orion_client_main.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -124,5 +121,26 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Orion_client/orion_modele.py</url>
+          <line>207</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Orion_client/orion_client_main.py</url>
+          <line>216</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file:////uranus.reseau.cvm/priveeleve/2170785/Session4/Genie Logiciel/Projet/C41/Orion_client/orion_vue.py</url>
+          <line>163</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

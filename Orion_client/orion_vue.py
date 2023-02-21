@@ -129,7 +129,7 @@ class Vue():
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
-        self.canevas.bind("<Button>", self.cliquer_cosmos)
+        self.canevas.bind("<Button>", self.cliquer_cosmos) # où tout commence
         self.canevas.tag_bind(ALL, "<Button>", self.cliquer_cosmos)
 
         # faire une multiselection
@@ -169,8 +169,10 @@ class Vue():
 
                 self.parent.cibler_flotte_espace(self.ma_selection[1], positionDestinationX, positionDestinationY, "espace")
                 self.canevas.delete("marqueur")
+                self.ma_selection = None
             else:
                 print("Vous devez choisir un point d'origine")
+                self.ma_selection = None
 
         # else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
         #     print("Region inconnue")

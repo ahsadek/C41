@@ -214,7 +214,7 @@ class Controleur():
         self.actionsrequises.append([self.mon_nom, "ciblerflotte", [idorigine, iddestination, type_cible]])
 
     def cibler_flotte_espace(self, idorigine, positionDestinationX, positionDestinationY, type_cible):
-        self.actionsrequises.append([self.mon_nom, "ciblerflotteEspace", [idorigine, positionDestinationX, positionDestinationY, type_cible]])
+        self.actionsrequises.append([self.mon_nom, "ciblerflotteespace", [idorigine, positionDestinationX, positionDestinationY, type_cible]])
 
     def afficher_etoile(self, joueur, cible):
         self.vue.afficher_etoile(joueur, cible)
