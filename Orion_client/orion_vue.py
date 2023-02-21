@@ -7,7 +7,6 @@ from tkinter.messagebox import *
 from helper import Helper as hlp
 import math
 import random
-from orion_modele import Etoile
 
 
 class Vue():
