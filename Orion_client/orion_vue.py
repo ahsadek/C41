@@ -216,6 +216,7 @@ class Vue():
         #cadre action etoile
         self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
         self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
+        self.btn_coloniser = Button(self.cadre_actions_etoile, text="Coloniser")
         self.btn_scanner.pack()
 
         # cadre info etoile
@@ -497,6 +498,8 @@ class Vue():
         self.cadre_actions_etoile.pack_forget()
         self.cadreinfochoix.pack_forget()
         self.cadre_info_etoile.pack_forget()
+        self.btn_coloniser.pack_forget()
+
         if t:  # il y a des tags
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
@@ -513,6 +516,9 @@ class Vue():
             if t[0] == "" and t[2] == "Etoile":
                 self.btn_scanner.config(command= lambda: self.afficher_ressources(evt, t[1]))
                 self.montrer_actions_etoile()
+
+            if t[0] == "" and t[2] == "Etoile": #! Verifier si le vaisseau selectionné est une cargo
+                self.btn_coloniser.pack()
 
         else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
             print("Region inconnue")
