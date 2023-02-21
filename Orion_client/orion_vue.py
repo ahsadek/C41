@@ -436,7 +436,7 @@ class Vue():
                         self.canevas.create_oval(x - t, y - t, x + t, y + t,
                                                  dash=(2, 2), outline=mod.joueurs[self.mon_nom].couleur,
                                                  tags=("multiselection", "marqueur"))
-            elif self.ma_selection[2] == "Flotte":
+            elif self.ma_selection[2] == "Vaisseau" or self.ma_selection[2] == "Cargo":
                 for j in joueur.flotte:
                     for i in joueur.flotte[j]:
                         i = joueur.flotte[j][i]
@@ -458,7 +458,7 @@ class Vue():
                     if k == "Vaisseau":
                         self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                                                       (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+                                                      tags=(j.proprietaire, str(j.id), "Vaisseau", k, "artefact"))
                     elif k == "Cargo":
                         # self.dessiner_cargo(j,tailleF,i,k)
                         self.dessiner_cargo(j, tailleF, i, k)
@@ -483,47 +483,58 @@ class Vue():
         dt = t / 2
         self.canevas.create_oval((obj.x - tailleF), (obj.y - tailleF),
                                  (obj.x + tailleF), (obj.y + tailleF), fill=joueur.couleur,
-                                 tags=(obj.proprietaire, str(obj.id), "Flotte", type_obj, "artefact"))
+                                 tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
         self.canevas.create_oval((x - dt), (y - dt),
                                  (x + dt), (y + dt), fill="yellow",
-                                 tags=(obj.proprietaire, str(obj.id), "Flotte", type_obj, "artefact"))
+                                 tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
 
     def dessiner_cargo1(self, j, tailleF, i, k):
         self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
-                                 tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+                                 tags=(j.proprietaire, str(j.id), "Cargo", k, "artefact"))
 
     def cliquer_cosmos(self, evt):
         t = self.canevas.gettags(CURRENT)
         self.cadre_actions_etoile.pack_forget()
         self.cadreinfochoix.pack_forget()
         self.cadre_info_etoile.pack_forget()
-        self.btn_coloniser.pack_forget()
 
         if t:  # il y a des tags
+            if t[0] == "" and t[2] == "Etoile":
+                self.btn_scanner.config(command= lambda: self.afficher_ressources(evt, t[1]))
+                self.montrer_actions_etoile()
+                
+                if self.ma_selection != None:    
+                    if self.ma_selection[2] == "Cargo":
+                            self.btn_coloniser.pack()
+                            #self.btn_coloniser.config(command=self.forget_button)
+                            print("cargo")
+
+            if self.ma_selection != None:
+                if self.ma_selection[2] != "Cargo":
+                    self.btn_coloniser.pack_forget()
+                
+
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
                 if t[2] == "Etoile":
                     self.montrer_etoile_selection()
-                elif t[2] == "Flotte":
+                elif t[2] == "Cargo" or t[2] == "Vaisseau":
                     self.montrer_flotte_selection()
             elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
                 if self.ma_selection:
                     self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
                 self.ma_selection = None
-                self.canevas.delete("marqueur")
-
-            if t[0] == "" and t[2] == "Etoile":
-                self.btn_scanner.config(command= lambda: self.afficher_ressources(evt, t[1]))
-                self.montrer_actions_etoile()
-
-            if t[0] == "" and t[2] == "Etoile": #! Verifier si le vaisseau selectionné est une cargo
-                self.btn_coloniser.pack()
+                self.canevas.delete("marqueur")                    
 
         else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
             print("Region inconnue")
+            self.btn_coloniser.pack_forget()
             self.ma_selection = None
             self.canevas.delete("marqueur")
+
+    # def forget_button(self):
+    #     self.btn_coloniser.pack_forget()
 
 
     def montrer_etoile_selection(self):
