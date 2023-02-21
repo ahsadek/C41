@@ -466,10 +466,24 @@ class Vue():
                     self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
                 self.ma_selection = None
                 self.canevas.delete("marqueur")
-        else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
-            print("Region inconnue")
-            self.ma_selection = None
-            self.canevas.delete("marqueur")
+        # else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
+        #     print("Region inconnue")
+        #     self.ma_selection = None
+        #     self.canevas.delete("marqueur")
+        else:  # si on n'a pas choisi une etoile (on veut se deplacer vers l'espace)
+            if self.ma_selection[2] == "Flotte":  # si on a deja choisi un vaiseau pour avoir un point de depart
+                positionDestinationX = self.canevas.canvasx(evt.x)
+                positionDestinationY = self.canevas.canvasy(evt.y)
+                print(f'X: {positionDestinationX}')
+                print(f'Y: {positionDestinationY}')
+
+                self.parent.cibler_flotte_espace(self.ma_selection[1], positionDestinationX, positionDestinationY,
+                                                 "espace")
+                self.canevas.delete("marqueur")
+                self.ma_selection = None
+            else:
+                print("Vous devez choisir un point d'origine")
+                self.ma_selection = None
 
     def montrer_etoile_selection(self):
         self.cadreinfochoix.pack(fill=BOTH)

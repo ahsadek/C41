@@ -48,6 +48,10 @@ class Etoile():
                            "energie": 10000,
                            "existentielle": 100}
 
+class Espace():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
 class Vaisseau():
     def __init__(self, parent, nom, x, y):
@@ -59,12 +63,13 @@ class Vaisseau():
         self.espace_cargo = 0
         self.energie = 100
         self.taille = 5
-        self.vitesse = 2
+        self.vitesse = 25
         self.cible = 0
         self.type_cible = None
         self.angle_cible = 0
         self.arriver = {"Etoile": self.arriver_etoile,
-                        "Porte_de_vers": self.arriver_porte}
+                        "Porte_de_vers": self.arriver_porte,
+                        "Espace": self.arriver_espace}
 
     def jouer_prochain_coup(self, trouver_nouveau=0):
         if self.cible != 0:
@@ -76,6 +81,11 @@ class Vaisseau():
     def acquerir_cible(self, cible, type_cible):
         self.type_cible = type_cible
         self.cible = cible
+        self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
+
+    def acquerir_cible_espace(self, posDestinationX, posDestinationY, type_cible):
+        self.type_cible = type_cible
+        self.cible = Espace(posDestinationX, posDestinationY)
         self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
 
     def avancer(self):
@@ -97,6 +107,15 @@ class Vaisseau():
         self.cible = 0
         return ["Etoile", cible]
 
+    def arriver_espace(self):
+        self.parent.log.append(
+            ["Arrive:", self.parent.parent.cadre_courant, "Espace", self.id, self.cible.id, self.cible.proprietaire])
+        # if not self.cible.proprietaire:
+        #     self.cible.proprietaire = self.proprietaire
+        cible = self.cible
+        self.cible = 0
+        return ["Espace", cible]
+
     def arriver_porte(self):
         self.parent.log.append(["Arrive:", self.parent.parent.cadre_courant, "Porte", self.id, self.cible.id, ])
         cible = self.cible
@@ -109,6 +128,7 @@ class Vaisseau():
             self.y = trou.porte_a.y
         self.cible = 0
         return ["Porte_de_ver", cible]
+
 
 
 class Cargo(Vaisseau):
@@ -175,6 +195,15 @@ class Joueur():
             else:
                 pass
 
+    def ciblerFlotteEspace(self, params):
+        idOrigine, posDestinationX, posDestinationY, typeCible = params
+        ori = None
+        for i in self.flotte.keys():
+            if idOrigine in self.flotte[i]:
+                ori = self.flotte[i][idOrigine]
+        ori.acquerir_cible_espace(posDestinationX, posDestinationY, "Espace")
+        return
+
     def jouer_prochain_coup(self):
         self.avancer_flotte()
 
@@ -218,9 +247,9 @@ class IA(Joueur):
         else:
             self.cooldown -= 1
 
-
 class Modele():
     def __init__(self, parent, joueurs):
+        self.id = get_prochain_id()
         self.parent = parent
         self.largeur = 9000
         self.hauteur = 9000
