@@ -136,6 +136,7 @@ class Joueur():
                        "Cargo": {}}
         self.actions = {"creervaisseau": self.creervaisseau,
                         "ciblerflotte": self.ciblerflotte}
+        self.ressources = None
 
     def creervaisseau(self, params):
         type_vaisseau = params[0]
