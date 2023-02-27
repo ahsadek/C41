@@ -233,6 +233,10 @@ class Controleur():
     def lister_objet(self, objet, id):
         self.vue.lister_objet(objet, id)
 
+    def update_points(self, points, joueur):
+        #self.vue.update_points(points, joueur)
+        pass
+
     #timer
     def update_timer(self):
         if self.modele.secondes > 0:

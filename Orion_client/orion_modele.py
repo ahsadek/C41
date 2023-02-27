@@ -44,9 +44,9 @@ class Etoile():
         self.x = x
         self.y = y
         self.taille = random.randrange(4, 8)
-        self.ressources = {"metal": 1000,
-                           "energie": 10000,
-                           "existentielle": 100}
+        self.ressources = {"metal": random.randrange(500, 1000),
+                           "energie": random.randrange(5000, 10000),
+                           "existentielle": random.randrange(50, 100)}
 
 
 class Vaisseau():
@@ -62,6 +62,7 @@ class Vaisseau():
         self.vitesse = 2
         self.cible = 0
         self.type_cible = None
+        self.moving = False
         self.angle_cible = 0
         self.arriver = {"Etoile": self.arriver_etoile,
                         "Porte_de_vers": self.arriver_porte}
@@ -80,6 +81,9 @@ class Vaisseau():
 
     def avancer(self):
         if self.cible != 0:
+            if not self.moving:
+                self.moving = True
+
             x = self.cible.x
             y = self.cible.y
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
@@ -95,6 +99,7 @@ class Vaisseau():
             self.cible.proprietaire = self.proprietaire
         cible = self.cible
         self.cible = 0
+        self.moving = False
         return ["Etoile", cible]
 
     def arriver_porte(self):

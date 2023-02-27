@@ -6,7 +6,6 @@ from tkinter import ttk
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
-import math
 
 import random
 
@@ -24,6 +23,7 @@ class Vue():
         self.zoom = 2
         self.ma_selection = None
         self.cadre_actif = None
+        self.nbrPoints = 0
         # cadre principal de l'application
         self.cadre_app = Frame(self.root, width=500, height=400, bg="red")
         self.cadre_app.pack(expand=1, fill=BOTH)
@@ -163,6 +163,8 @@ class Vue():
         self.creer_cadre_outils()
 
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
+        self.label_points = Label(self.cadreoutils, text="Points : " + str(self.nbrPoints))
+        self.label_points.pack(side=TOP)
         return self.cadrepartie
 
     def update_cadre_timer(self):
@@ -217,8 +219,7 @@ class Vue():
         self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
         self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
         self.btn_coloniser = Button(self.cadre_actions_etoile, text="Coloniser")
-        self.btn_scanner.pack()
-
+        #self.btn_scanner.pack()
         # cadre info etoile
         self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
         self.champ_metal = Label(self.cadre_info_etoile)
@@ -247,6 +248,19 @@ class Vue():
         self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])))
         self.champ_existentielle.config(text=("Existentielle : " + str(self.modele.etoiles[i].ressources["existentielle"])))
         self.cadre_info_etoile.pack()
+
+    def coloniser(self, evt, id):
+        # i = 0
+        # for etoile in self.modele.etoiles:
+        #     if etoile.id == id:
+        #         break
+        #     else:
+        #         i += 1
+        # metal = self.modele.etoiles[i].ressources["metal"]
+        # energie = self.modele.etoiles[i].ressources["energie"]
+        # existentielle = self.modele.etoiles[i].ressources["existentielle"]
+        self.nbrPoints += 15
+        self.label_points.config(text=("Points : " + str(self.nbrPoints)))
 
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
@@ -514,17 +528,22 @@ class Vue():
         if t:  # il y a des tags
             if t[0] == "" and t[2] == "Etoile":
                 self.btn_scanner.config(command= lambda: self.afficher_ressources(evt, t[1]))
+                self.btn_coloniser.config(command= lambda: self.coloniser(evt, t[1]))
                 self.montrer_actions_etoile()
                 
                 if self.ma_selection != None:    
                     if self.ma_selection[2] == "Cargo":
-                            self.btn_coloniser.pack()
-                            #self.btn_coloniser.config(command=self.forget_button)
-                            print("cargo")
+                        self.btn_coloniser.pack()
+                        self.btn_scanner.pack_forget()
+                        #self.btn_coloniser.config(command=self.forget_button)
+                        #self.messageArrivee = Label(self.cadreoutils, text="Étoile colonisée!")
+                        #self.cadreoutils.after(2000, self.messageArrivee.pack())
+                        print("cargo")
 
             if self.ma_selection != None:
-                if self.ma_selection[2] != "Cargo":
+                if self.ma_selection[2] == "Vaisseau":
                     self.btn_coloniser.pack_forget()
+                    self.btn_scanner.pack()
                 
 
             if t[0] == self.mon_nom:  # et
@@ -542,6 +561,7 @@ class Vue():
         else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
             print("Region inconnue")
             self.btn_coloniser.pack_forget()
+            self.btn_scanner.pack_forget()
             self.ma_selection = None
             self.canevas.delete("marqueur")
 
