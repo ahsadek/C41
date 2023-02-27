@@ -50,8 +50,10 @@ class Etoile():
 
 class Espace():
     def __init__(self, x, y):
+        self.id = get_prochain_id()
         self.x = x
         self.y = y
+        self.proprietaire = None
 
 class Vaisseau():
     def __init__(self, parent, nom, x, y):
@@ -155,7 +157,8 @@ class Joueur():
         self.flotte = {"Vaisseau": {},
                        "Cargo": {}}
         self.actions = {"creervaisseau": self.creervaisseau,
-                        "ciblerflotte": self.ciblerflotte}
+                        "ciblerflotte": self.ciblerflotte,
+                        "ciblerflotteespace": self.ciblerFlotteEspace}
 
     def creervaisseau(self, params):
         type_vaisseau = params[0]
