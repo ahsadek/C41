@@ -175,16 +175,13 @@ class Joueur():
     def ciblerflotte(self, ids):
         idori, iddesti, type_cible = ids
         ori = None
-        for i in self.flotte.keys():
-            if self.flotte[i] != {}:
-                if idori in self.flotte[i]:
-                    ori = self.flotte[i][idori]
 
-        # if idori in self.flotte["Vaisseau"]:
-        #     ori = self.flotte["Vaisseau"][idori]
-
-        if idori in self.flotte["Cargo"]:
+        if idori in self.flotte["Cargo"]:       # laisser ce bout de code ici, sinon tout casse
             ori = self.flotte["Cargo"][idori]
+
+        for i in self.flotte:   # code prof, fonctionne seulement pour vaisseau
+            if idori in self.flotte[i]:
+                ori = self.flotte[i][idori]
 
         # if ori: # deplacements entre des objets avec des id
             if type_cible == "Etoile":
