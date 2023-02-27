@@ -13,6 +13,7 @@ class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
         self.parent = parent
         self.root = Tk()
+        # self.root.configure(highlightcolor='red')
         self.root.title("Je suis " + mon_nom)
         self.mon_nom = mon_nom
         # attributs
@@ -28,7 +29,11 @@ class Vue():
         self.creer_cadres(urlserveur, mon_nom, msg_initial)
         self.changer_cadre("splash")
 
+        # affichage/images
         self.imageEtoile = tk.PhotoImage(file='images/star.png').subsample(6,6)
+        self.imageVaissExplo = tk.PhotoImage(file='images/vaisseauExploration.png').subsample(6,6)
+        self.imageVaissExtra = tk.PhotoImage(file='images/vaisseauExtra.png').subsample(6, 6)
+
         # PROTOCOLE POUR INTERCEPTER LA FERMETURE DU ROOT - qui termine l'application
         # self.root.protocol("WM_DELETE_WINDOW", self.demander_abandon)
 
@@ -62,13 +67,13 @@ class Vue():
     def creer_cadre_splash(self, urlserveur, mon_nom, msg_initial):
         self.cadre_splash = Frame(self.cadre_app)
         # un canvas est utilisé pour 'dessiner' les widgets de cette fenêtre voir 'create_window' plus bas
-        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="pink")
+        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="gray30")
         self.canevas_splash.pack()
 
         # creation ds divers widgets (champ de texte 'Entry' et boutons cliquables (Button)
-        self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE)
-        self.nomsplash = Entry(font=("Arial", 14))
-        self.urlsplash = Entry(font=("Arial", 14), width=42)
+        self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE, bg='gray20', fg='white')
+        self.nomsplash = Entry(font=("Arial", 14), bg='gray20', fg='white')
+        self.urlsplash = Entry(font=("Arial", 14), width=42, bg='gray20', fg='white')
         self.btnurlconnect = Button(text="Connecter", font=("Arial", 12), command=self.connecter_serveur)
         # on insère les infos par défaut (nom url) et reçu au démarrage (dispo)
         self.nomsplash.insert(0, mon_nom)
@@ -97,11 +102,11 @@ class Vue():
     def creer_cadre_lobby(self):
         # le cadre lobby, pour isncription des autres joueurs, remplace le splash
         self.cadrelobby = Frame(self.cadre_app)
-        self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="lightblue")
+        self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="gray30")
         self.canevaslobby.pack()
         # widgets du lobby
         # un listbox pour afficher les joueurs inscrit pour la partie à lancer
-        self.listelobby = Listbox(borderwidth=2, relief=GROOVE)
+        self.listelobby = Listbox(borderwidth=2, relief=GROOVE, bg='gray20', fg='white', font=("Arial", 18))
 
         # bouton pour lancer la partie, uniquement accessible à celui qui a creer la partie dans le splash
         self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie)
@@ -187,7 +192,7 @@ class Vue():
 
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
         self.canevas_minimap = Canvas(self.cadreminimap, width=self.taille_minimap, height=self.taille_minimap,
-                                      bg="pink")
+                                      bg="gray80")
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
@@ -313,8 +318,13 @@ class Vue():
             t = i.taille * self.zoom
             imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile)
             self.canevas.itemconfig(imageEtoile)
-            self.canevas.create_oval(i.x - t + 2, i.y - t + 2, i.x + t - 2, i.y + t - 2,
-                                     fill='', outline=col, width=4,
+            # cercle vide large
+            # self.canevas.create_oval(i.x - t + 2, i.y - t + 2, i.x + t - 2, i.y + t - 2,
+            #                          fill='', outline=col, width=4,
+            #                          tags=(i.proprietaire, str(i.id), "Etoile",))
+            # cercle plein petit
+            self.canevas.create_oval(i.x + t, i.y + t, i.x - t, i.y - t,
+                                     fill=col, outline=col, width=4,
                                      tags=(i.proprietaire, str(i.id), "Etoile",))
 
             # recuperer dimensions image
@@ -381,7 +391,7 @@ class Vue():
         id = cible.id
         couleur = joueur1.couleur
 
-        self.canevas.itemconfig(id, outline=couleur)
+        self.canevas.itemconfig(id, fill=couleur)   # si on veut un cercle vide large, changer fill -> outline
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
 
     # ajuster la liste des vaisseaux
