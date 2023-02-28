@@ -7,6 +7,7 @@ from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
 import math
+import os.path
 
 import random
 
@@ -34,10 +35,11 @@ class Vue():
         # PROTOCOLE POUR INTERCEPTER LA FERMETURE DU ROOT - qui termine l'application
         # self.root.protocol("WM_DELETE_WINDOW", self.demander_abandon)
         
-         # affichage/images
-        self.imageEtoile = PhotoImage(file='images/star.png').subsample(6,6)
-        self.imageVaissExplo = PhotoImage(file='images/vaisseauExploration.png').subsample(6,6)
-        self.imageVaissExtra = PhotoImage(file='images/vaisseauExtra.png').subsample(6, 6)
+        # affichage/images
+        dossier_images = os.path.join(os.path.curdir, 'images')
+        self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
+        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(6,6)
+        self.imageVaissExtra = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExtra.png')).subsample(6, 6)
 
         # # sera charge apres l'initialisation de la partie, contient les donnees pour mettre l'interface a jour
         self.modele = None
