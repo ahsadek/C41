@@ -499,7 +499,7 @@ class Vue():
         if t:  # il y a des tags
             if t[0] == "" and t[2] == "Etoile":
                 self.btn_scanner.config(command= lambda: self.afficher_ressources(evt, t[1]))
-                self.montrer_actions_etoile()
+                self.cadre_actions_etoile.pack()
                 
                 if self.ma_selection != None:    
                     if self.ma_selection[2] == "Cargo":
@@ -529,7 +529,7 @@ class Vue():
             self.btn_coloniser.pack_forget()
             
             #deplacement dans le vide
-            if self.ma_selection[2] == "Flotte":  # si on a deja choisi un vaiseau pour avoir un point de depart
+            if self.ma_selection[2] == "Vaisseau" or self.ma_selection[2] == "Cargo":  # si on a deja choisi un vaiseau pour avoir un point de depart
                 positionDestinationX = self.canevas.canvasx(evt.x)
                 positionDestinationY = self.canevas.canvasy(evt.y)
                 print(f'X: {positionDestinationX}')
