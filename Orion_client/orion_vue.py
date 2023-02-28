@@ -20,7 +20,7 @@ class Vue():
         self.root.title("Je suis " + mon_nom)
         self.mon_nom = mon_nom
         # attributs
-        self.taille_minimap = 240
+        self.taille_minimap = 240 # 240 quoi?
         self.zoom = 2
         self.ma_selection = None
         self.cadre_actif = None
@@ -104,19 +104,16 @@ class Vue():
         # widgets du lobby
         # un listbox pour afficher les joueurs inscrit pour la partie à lancer
         self.listelobby = Listbox(borderwidth=2, relief=GROOVE)
-
-        # bouton pour lancer la partie, uniquement accessible à celui qui a creer la partie dans le splash
-        self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie)
         
-        #! Eric
+        #timer
         self.liste_options_temps = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
         self.options_temps = ttk.Combobox(values=self.liste_options_temps, state="normal")
         self.options_temps.current(0)
         self.options_temps.bind("<<ComboboxSelected>>", self.update_timer)
         self.label_temps = Label(text="Durée de la partie en minutes :")
 
-        #! Fin Eric
-        
+        # bouton pour lancer la partie, uniquement accessible à celui qui a creer la partie dans le splash
+        self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie)
         # affichage des widgets dans le canevaslobby (similaire au splash)
         self.canevaslobby.create_window(440, 240, window=self.listelobby, width=200, height=400)
         self.canevaslobby.create_window(200, 400, window=self.btnlancerpartie, width=100, height=30)
@@ -124,7 +121,7 @@ class Vue():
         self.canevaslobby.create_window(200, 170, window=self.label_temps, width=200, height=30)
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrelobby
-
+    
     def update_timer(self, event):
         self.minutes = int(self.options_temps.get())
         print(self.minutes)
@@ -164,7 +161,7 @@ class Vue():
 
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
         return self.cadrepartie
-
+    
     def update_cadre_timer(self):
         self.cadre_timer.config(text=(str(self.minutes) + ":" + str(self.secondes)))
 
@@ -212,7 +209,7 @@ class Vue():
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
-
+        
         #cadre action etoile
         self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
         self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
@@ -231,7 +228,7 @@ class Vue():
         self.cadres["jeu"] = self.cadrepartie
         # fonction qui affiche le nombre d'items sur le jeu
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
-
+        
     def afficher_ressources(self, evt, id):
         self.champ_id.config(text=("id : " + id))
         self.cadre_info_etoile.pack()
@@ -525,23 +522,29 @@ class Vue():
                 if self.ma_selection:
                     self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
                 self.ma_selection = None
-                self.canevas.delete("marqueur")                    
-
-        else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
-            print("Region inconnue")
+                self.canevas.delete("marqueur")
+                
+        else:  # si on n'a pas choisi une etoile (on veut se deplacer vers l'espace)
+            #interface
             self.btn_coloniser.pack_forget()
-            self.ma_selection = None
-            self.canevas.delete("marqueur")
+            
+            #deplacement dans le vide
+            if self.ma_selection[2] == "Flotte":  # si on a deja choisi un vaiseau pour avoir un point de depart
+                positionDestinationX = self.canevas.canvasx(evt.x)
+                positionDestinationY = self.canevas.canvasy(evt.y)
+                print(f'X: {positionDestinationX}')
+                print(f'Y: {positionDestinationY}')
 
-    # def forget_button(self):
-    #     self.btn_coloniser.pack_forget()
-
+                self.parent.cibler_flotte_espace(self.ma_selection[1], positionDestinationX, positionDestinationY,
+                                                 "espace")
+                self.canevas.delete("marqueur")
+                self.ma_selection = None
+            else:
+                print("Vous devez choisir un point d'origine")
+                self.ma_selection = None
 
     def montrer_etoile_selection(self):
         self.cadreinfochoix.pack(fill=BOTH)
-
-    def montrer_actions_etoile(self):
-        self.cadre_actions_etoile.pack(fill=BOTH)
 
     def montrer_flotte_selection(self):
         print("À IMPLANTER - FLOTTE de ", self.mon_nom)
