@@ -2,6 +2,7 @@
 ##  version 2022 14 mars - jmd
 
 from tkinter import *
+from tkinter import ttk, PhotoImage
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
@@ -12,6 +13,8 @@ import random
 
 class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
+        self.minutes = 10
+        self.secondes = 00
         self.parent = parent
         self.root = Tk()
         self.root.title("Je suis " + mon_nom)
@@ -30,6 +33,11 @@ class Vue():
         self.changer_cadre("splash")
         # PROTOCOLE POUR INTERCEPTER LA FERMETURE DU ROOT - qui termine l'application
         # self.root.protocol("WM_DELETE_WINDOW", self.demander_abandon)
+        
+         # affichage/images
+        self.imageEtoile = PhotoImage(file='images/star.png').subsample(6,6)
+        self.imageVaissExplo = PhotoImage(file='images/vaisseauExploration.png').subsample(6,6)
+        self.imageVaissExtra = PhotoImage(file='images/vaisseauExtra.png').subsample(6, 6)
 
         # # sera charge apres l'initialisation de la partie, contient les donnees pour mettre l'interface a jour
         self.modele = None
@@ -101,14 +109,27 @@ class Vue():
         # widgets du lobby
         # un listbox pour afficher les joueurs inscrit pour la partie à lancer
         self.listelobby = Listbox(borderwidth=2, relief=GROOVE)
+        
+        #timer
+        self.liste_options_temps = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+        self.options_temps = ttk.Combobox(values=self.liste_options_temps, state="normal")
+        self.options_temps.current(0)
+        self.options_temps.bind("<<ComboboxSelected>>", self.update_timer)
+        self.label_temps = Label(text="Durée de la partie en minutes :")
 
         # bouton pour lancer la partie, uniquement accessible à celui qui a creer la partie dans le splash
         self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie)
         # affichage des widgets dans le canevaslobby (similaire au splash)
         self.canevaslobby.create_window(440, 240, window=self.listelobby, width=200, height=400)
         self.canevaslobby.create_window(200, 400, window=self.btnlancerpartie, width=100, height=30)
+        self.canevaslobby.create_window(200, 200, window=self.options_temps, width=100, height=30)
+        self.canevaslobby.create_window(200, 170, window=self.label_temps, width=200, height=30)
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrelobby
+    
+    def update_timer(self, event):
+        self.minutes = int(self.options_temps.get())
+        print(self.minutes)
 
     def creer_cadre_partie(self):
         self.cadrepartie = Frame(self.cadre_app, width=600, height=200, bg="yellow")
@@ -145,6 +166,9 @@ class Vue():
 
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
         return self.cadrepartie
+    
+    def update_cadre_timer(self):
+        self.cadre_timer.config(text=(str(self.minutes) + ":" + str(self.secondes)))
 
     def creer_cadre_outils(self):
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")
@@ -190,10 +214,29 @@ class Vue():
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
+        
+        #cadre action etoile
+        self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
+        self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
+        self.btn_coloniser = Button(self.cadre_actions_etoile, text="Coloniser")
+        self.btn_scanner.pack()
+
+        # cadre info etoile
+        self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
+        self.champ_id = Label(self.cadre_info_etoile)
+        self.champ_id.pack()        
+
+        #timer
+        self.cadre_timer = Label(self.cadreoutils, text=(str(self.minutes) + ":" + str(self.secondes)), width=4, height=1, bg="pink")
+        self.cadre_timer.pack(side=BOTTOM)
 
         self.cadres["jeu"] = self.cadrepartie
         # fonction qui affiche le nombre d'items sur le jeu
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
+        
+    def afficher_ressources(self, evt, id):
+        self.champ_id.config(text=("id : " + id))
+        self.cadre_info_etoile.pack()
 
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
@@ -310,9 +353,28 @@ class Vue():
         # affichage des etoiles
         for i in mod.etoiles:
             t = i.taille * self.zoom
-            self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
-                                     fill="grey80", outline=col,
+            imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile)
+            self.canevas.itemconfig(imageEtoile)
+            # cercle vide large
+            # self.canevas.create_oval(i.x - t + 2, i.y - t + 2, i.x + t - 2, i.y + t - 2,
+            #                          fill='', outline=col, width=4,
+            #                          tags=(i.proprietaire, str(i.id), "Etoile",))
+            # cercle plein petit
+            self.canevas.create_oval(i.x + t, i.y + t, i.x - t, i.y - t,
+                                     fill=col, outline=col, width=4,
                                      tags=(i.proprietaire, str(i.id), "Etoile",))
+
+            # recuperer dimensions image
+            imageEtoile_width = self.imageEtoile.width()
+            imageEtoile_height = self.imageEtoile.height()
+
+            # centrer image
+            image_x = i.x - imageEtoile_width / 2
+            image_y = i.y - imageEtoile_height / 2
+
+            # positioner image au centre
+            self.canevas.coords(imageEtoile, image_x, image_y)
+
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
@@ -395,7 +457,7 @@ class Vue():
                         self.canevas.create_oval(x - t, y - t, x + t, y + t,
                                                  dash=(2, 2), outline=mod.joueurs[self.mon_nom].couleur,
                                                  tags=("multiselection", "marqueur"))
-            elif self.ma_selection[2] == "Flotte":
+            elif self.ma_selection[2] == "Vaisseau" or self.ma_selection[2] == "Cargo":
                 for j in joueur.flotte:
                     for i in joueur.flotte[j]:
                         i = joueur.flotte[j][i]
@@ -417,7 +479,7 @@ class Vue():
                     if k == "Vaisseau":
                         self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                                                       (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+                                                      tags=(j.proprietaire, str(j.id), "Vaisseau", k, "artefact"))
                     elif k == "Cargo":
                         # self.dessiner_cargo(j,tailleF,i,k)
                         self.dessiner_cargo(j, tailleF, i, k)
@@ -442,36 +504,56 @@ class Vue():
         dt = t / 2
         self.canevas.create_oval((obj.x - tailleF), (obj.y - tailleF),
                                  (obj.x + tailleF), (obj.y + tailleF), fill=joueur.couleur,
-                                 tags=(obj.proprietaire, str(obj.id), "Flotte", type_obj, "artefact"))
+                                 tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
         self.canevas.create_oval((x - dt), (y - dt),
                                  (x + dt), (y + dt), fill="yellow",
-                                 tags=(obj.proprietaire, str(obj.id), "Flotte", type_obj, "artefact"))
+                                 tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
 
     def dessiner_cargo1(self, j, tailleF, i, k):
         self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
-                                 tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+                                 tags=(j.proprietaire, str(j.id), "Cargo", k, "artefact"))
 
     def cliquer_cosmos(self, evt):
         t = self.canevas.gettags(CURRENT)
+        self.cadre_actions_etoile.pack_forget()
+        self.cadreinfochoix.pack_forget()
+        self.cadre_info_etoile.pack_forget()
+
         if t:  # il y a des tags
+            if t[0] == "" and t[2] == "Etoile":
+                self.btn_scanner.config(command= lambda: self.afficher_ressources(evt, t[1]))
+                self.cadre_actions_etoile.pack()
+                
+                if self.ma_selection != None:    
+                    if self.ma_selection[2] == "Cargo":
+                            self.btn_coloniser.pack()
+                            #self.btn_coloniser.config(command=self.forget_button)
+                            print("cargo")
+
+            if self.ma_selection != None:
+                if self.ma_selection[2] != "Cargo":
+                    self.btn_coloniser.pack_forget()
+                
+
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
                 if t[2] == "Etoile":
                     self.montrer_etoile_selection()
-                elif t[2] == "Flotte":
+                elif t[2] == "Cargo" or t[2] == "Vaisseau":
                     self.montrer_flotte_selection()
             elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
                 if self.ma_selection:
                     self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
                 self.ma_selection = None
                 self.canevas.delete("marqueur")
-        # else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
-        #     print("Region inconnue")
-        #     self.ma_selection = None
-        #     self.canevas.delete("marqueur")
+                
         else:  # si on n'a pas choisi une etoile (on veut se deplacer vers l'espace)
-            if self.ma_selection[2] == "Flotte":  # si on a deja choisi un vaiseau pour avoir un point de depart
+            #interface
+            self.btn_coloniser.pack_forget()
+            
+            #deplacement dans le vide
+            if self.ma_selection[2] == "Vaisseau" or self.ma_selection[2] == "Cargo":  # si on a deja choisi un vaiseau pour avoir un point de depart
                 positionDestinationX = self.canevas.canvasx(evt.x)
                 positionDestinationY = self.canevas.canvasy(evt.y)
                 print(f'X: {positionDestinationX}')

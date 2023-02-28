@@ -255,8 +255,7 @@ class IA(Joueur):
             self.cooldown -= 1
 
 class Modele():
-    def __init__(self, parent, joueurs):
-        self.id = get_prochain_id()
+    def __init__(self, parent, joueurs, selected_timer):
         self.parent = parent
         self.largeur = 9000
         self.hauteur = 9000
@@ -269,6 +268,8 @@ class Modele():
         self.creeretoiles(joueurs, 1)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
+        self.minutes = selected_timer
+        self.secondes = 00
 
     def creer_troudevers(self, n):
         bordure = 10
