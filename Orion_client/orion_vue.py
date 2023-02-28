@@ -23,7 +23,7 @@ class Vue():
         self.zoom = 2
         self.ma_selection = None
         self.cadre_actif = None
-        self.nbrPoints = 0
+        self.nbrPoints = 100
         # cadre principal de l'application
         self.cadre_app = Frame(self.root, width=500, height=400, bg="red")
         self.cadre_app.pack(expand=1, fill=BOTH)
@@ -527,8 +527,8 @@ class Vue():
 
         if t:  # il y a des tags
             if t[0] == "" and t[2] == "Etoile":
-                self.btn_scanner.config(command= lambda: self.afficher_ressources(evt, t[1]))
-                self.btn_coloniser.config(command= lambda: self.coloniser(evt, t[1]))
+                self.btn_scanner.config(command=lambda: self.afficher_ressources(evt, t[1]))
+                self.btn_coloniser.config(command=lambda: self.coloniser(evt, t[1]))
                 self.montrer_actions_etoile()
                 
                 if self.ma_selection != None:    
