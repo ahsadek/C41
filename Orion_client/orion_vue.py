@@ -25,6 +25,10 @@ class Vue():
         self.zoom = 2
         self.ma_selection = None
         self.cadre_actif = None
+        self.nbrPoints = 100
+        self.nbrMetal = 0
+        self.nbrEnergie = 0
+        self.nbrExistentielle = 0
         # cadre principal de l'application
         self.cadre_app = Frame(self.root, width=500, height=400, bg="red")
         self.cadre_app.pack(expand=1, fill=BOTH)
@@ -167,6 +171,14 @@ class Vue():
         self.creer_cadre_outils()
 
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
+        self.label_points = Label(self.cadreoutils, text="Points : " + str(self.nbrPoints))
+        self.label_metal = Label(self.cadreoutils, text="Métal : " + str(self.nbrMetal))
+        self.label_energie = Label(self.cadreoutils, text="Énergie : " + str(self.nbrEnergie))
+        self.label_existentielle = Label(self.cadreoutils, text="Éxistentielle : " + str(self.nbrExistentielle))
+        self.label_points.pack(side=TOP)
+        self.label_metal.pack(side=TOP)
+        self.label_energie.pack(side=TOP)
+        self.label_existentielle.pack(side=TOP)
         return self.cadrepartie
     
     def update_cadre_timer(self):
@@ -221,12 +233,16 @@ class Vue():
         self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
         self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
         self.btn_coloniser = Button(self.cadre_actions_etoile, text="Coloniser")
-        self.btn_scanner.pack()
+        #self.btn_scanner.pack()
 
         # cadre info etoile
         self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
-        self.champ_id = Label(self.cadre_info_etoile)
-        self.champ_id.pack()        
+        self.champ_metal = Label(self.cadre_info_etoile)
+        self.champ_energie = Label(self.cadre_info_etoile)
+        self.champ_existentielle = Label(self.cadre_info_etoile)
+        self.champ_metal.pack()
+        self.champ_energie.pack()
+        self.champ_existentielle.pack()
 
         #timer
         self.cadre_timer = Label(self.cadreoutils, text=(str(self.minutes) + ":" + str(self.secondes)), width=4, height=1, bg="pink")
@@ -237,8 +253,34 @@ class Vue():
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
         
     def afficher_ressources(self, evt, id):
-        self.champ_id.config(text=("id : " + id))
+        i = 0
+        for etoile in self.modele.etoiles:
+            if etoile.id == id:
+                break
+            else:
+                i += 1
+        self.champ_metal.config(text=("Metal : " + str(self.modele.etoiles[i].ressources["metal"])))
+        self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])))
+        self.champ_existentielle.config(text=("Existentielle : " + str(self.modele.etoiles[i].ressources["existentielle"])))
         self.cadre_info_etoile.pack()
+
+    def coloniser(self, evt, id):
+        i = 0
+        for etoile in self.modele.etoiles:
+            if etoile.id == id:
+                break
+            else:
+                i += 1
+        self.nbrMetal += self.modele.etoiles[i].ressources["metal"]
+        self.nbrEnergie += self.modele.etoiles[i].ressources["energie"]
+        self.nbrExistentielle += self.modele.etoiles[i].ressources["existentielle"]
+        self.nbrPoints += 15
+        self.label_points.config(text=("Points : " + str(self.nbrPoints)))
+        self.label_metal.config(text=("Metal : " + str(self.nbrMetal)))
+        self.label_energie.config(text=("Energie : " + str(self.nbrEnergie)))
+        self.label_existentielle.config(text=("Existentielle : " + str(self.nbrExistentielle)))
+        # self.btn_coloniser.config(state=DISABLED)
+        self.btn_coloniser.pack_forget()
 
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
@@ -524,18 +566,23 @@ class Vue():
 
         if t:  # il y a des tags
             if t[0] == "" and t[2] == "Etoile":
-                self.btn_scanner.config(command= lambda: self.afficher_ressources(evt, t[1]))
-                self.cadre_actions_etoile.pack()
+                self.btn_scanner.config(command=lambda: self.afficher_ressources(evt, t[1]))
+                self.btn_coloniser.config(command=lambda: self.coloniser(evt, t[1]))
+                self.montrer_actions_etoile()
                 
                 if self.ma_selection != None:    
                     if self.ma_selection[2] == "Cargo":
-                            self.btn_coloniser.pack()
-                            #self.btn_coloniser.config(command=self.forget_button)
-                            print("cargo")
+                        self.btn_coloniser.pack()
+                        self.btn_scanner.pack_forget()
+                        # self.btn_coloniser.config(command=self.forget_button)
+                        # self.messageArrivee = Label(self.cadreoutils, text="Étoile colonisée!")
+                        # self.cadreoutils.after(2000, self.messageArrivee.pack())
+                        print("cargo")
 
             if self.ma_selection != None:
-                if self.ma_selection[2] != "Cargo":
+                if self.ma_selection[2] == "Vaisseau":
                     self.btn_coloniser.pack_forget()
+                    self.btn_scanner.pack()
                 
 
             if t[0] == self.mon_nom:  # et
@@ -552,25 +599,31 @@ class Vue():
                 
         else:  # si on n'a pas choisi une etoile (on veut se deplacer vers l'espace)
             #interface
+            print("Region inconnue")
             self.btn_coloniser.pack_forget()
-            
-            #deplacement dans le vide
-            if self.ma_selection[2] == "Vaisseau" or self.ma_selection[2] == "Cargo":  # si on a deja choisi un vaiseau pour avoir un point de depart
-                positionDestinationX = self.canevas.canvasx(evt.x)
-                positionDestinationY = self.canevas.canvasy(evt.y)
-                print(f'X: {positionDestinationX}')
-                print(f'Y: {positionDestinationY}')
+            self.btn_scanner.pack_forget()
 
-                self.parent.cibler_flotte_espace(self.ma_selection[1], positionDestinationX, positionDestinationY,
-                                                 "espace")
-                self.canevas.delete("marqueur")
-                self.ma_selection = None
-            else:
-                print("Vous devez choisir un point d'origine")
-                self.ma_selection = None
+            #deplacement dans le vide
+            if self.ma_selection != None:
+                if self.ma_selection[2] == "Vaisseau" or self.ma_selection[2] == "Cargo":  # si on a deja choisi un vaiseau pour avoir un point de depart
+                    positionDestinationX = self.canevas.canvasx(evt.x)
+                    positionDestinationY = self.canevas.canvasy(evt.y)
+                    print(f'X: {positionDestinationX}')
+                    print(f'Y: {positionDestinationY}')
+
+                    self.parent.cibler_flotte_espace(self.ma_selection[1], positionDestinationX, positionDestinationY,
+                                                     "espace")
+                    self.canevas.delete("marqueur")
+                    self.ma_selection = None
+                else:
+                    print("Vous devez choisir un point d'origine")
+                    self.ma_selection = None
 
     def montrer_etoile_selection(self):
         self.cadreinfochoix.pack(fill=BOTH)
+
+    def montrer_actions_etoile(self):
+        self.cadre_actions_etoile.pack(fill=BOTH)
 
     def montrer_flotte_selection(self):
         print("À IMPLANTER - FLOTTE de ", self.mon_nom)

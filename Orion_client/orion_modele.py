@@ -44,9 +44,9 @@ class Etoile():
         self.x = x
         self.y = y
         self.taille = random.randrange(4, 8)
-        self.ressources = {"metal": 1000,
-                           "energie": 10000,
-                           "existentielle": 100}
+        self.ressources = {"metal": random.randrange(500, 1000),
+                           "energie": random.randrange(5000, 10000),
+                           "existentielle": random.randrange(50, 100)}
 
 class Espace():
     def __init__(self, x, y):
@@ -159,6 +159,7 @@ class Joueur():
         self.actions = {"creervaisseau": self.creervaisseau,
                         "ciblerflotte": self.ciblerflotte,
                         "ciblerflotteespace": self.ciblerFlotteEspace}
+        self.ressources = None
 
     def creervaisseau(self, params):
         type_vaisseau = params[0]
