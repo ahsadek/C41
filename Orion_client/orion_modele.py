@@ -46,7 +46,7 @@ class Etoile():
         self.taille = random.randrange(4, 8)
         self.ressources = {"metal": random.randrange(500, 1000),
                            "energie": random.randrange(5000, 10000),
-                           "existentielle": random.randrange(50, 100)}
+                           "population": random.randrange(50, 100)}
 
 class Espace():
     def __init__(self, x, y):

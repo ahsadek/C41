@@ -28,7 +28,7 @@ class Vue():
         self.nbrPoints = 100
         self.nbrMetal = 0
         self.nbrEnergie = 0
-        self.nbrExistentielle = 0
+        self.nbrPopulation = 0
         # cadre principal de l'application
         self.cadre_app = Frame(self.root, width=500, height=400, bg="red")
         self.cadre_app.pack(expand=1, fill=BOTH)
@@ -174,11 +174,11 @@ class Vue():
         self.label_points = Label(self.cadreoutils, text="Points : " + str(self.nbrPoints))
         self.label_metal = Label(self.cadreoutils, text="Métal : " + str(self.nbrMetal))
         self.label_energie = Label(self.cadreoutils, text="Énergie : " + str(self.nbrEnergie))
-        self.label_existentielle = Label(self.cadreoutils, text="Éxistentielle : " + str(self.nbrExistentielle))
+        self.label_population = Label(self.cadreoutils, text="Population : " + str(self.nbrPopulation))
         self.label_points.pack(side=TOP)
         self.label_metal.pack(side=TOP)
         self.label_energie.pack(side=TOP)
-        self.label_existentielle.pack(side=TOP)
+        self.label_population.pack(side=TOP)
         return self.cadrepartie
     
     def update_cadre_timer(self):
@@ -273,12 +273,12 @@ class Vue():
                 i += 1
         self.nbrMetal += self.modele.etoiles[i].ressources["metal"]
         self.nbrEnergie += self.modele.etoiles[i].ressources["energie"]
-        self.nbrExistentielle += self.modele.etoiles[i].ressources["existentielle"]
+        self.nbrPopulation += self.modele.etoiles[i].ressources["population"]
         self.nbrPoints += 15
         self.label_points.config(text=("Points : " + str(self.nbrPoints)))
         self.label_metal.config(text=("Metal : " + str(self.nbrMetal)))
         self.label_energie.config(text=("Energie : " + str(self.nbrEnergie)))
-        self.label_existentielle.config(text=("Existentielle : " + str(self.nbrExistentielle)))
+        self.label_existentielle.config(text=("Population : " + str(self.nbrPopulation)))
         # self.btn_coloniser.config(state=DISABLED)
         self.btn_coloniser.pack_forget()
 
