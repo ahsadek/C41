@@ -209,7 +209,7 @@ class Controleur():
     ############            OUTILS           ###################
     # generateur de nouveau nom, peut y avoir collision
     def generer_nom(self):
-        mon_nom = "JAJA_" + str(random.randrange(100, 1000))
+        mon_nom = "JOUEUR_" + str(random.randrange(100, 1000))
         return mon_nom
 
     def abandonner(self):

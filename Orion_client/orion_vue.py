@@ -75,7 +75,7 @@ class Vue():
     def creer_cadre_splash(self, urlserveur, mon_nom, msg_initial):
         self.cadre_splash = Frame(self.cadre_app)
         # un canvas est utilisé pour 'dessiner' les widgets de cette fenêtre voir 'create_window' plus bas
-        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="pink")
+        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="gray20")
         self.canevas_splash.pack()
 
         # creation ds divers widgets (champ de texte 'Entry' et boutons cliquables (Button)
@@ -110,7 +110,7 @@ class Vue():
     def creer_cadre_lobby(self):
         # le cadre lobby, pour isncription des autres joueurs, remplace le splash
         self.cadrelobby = Frame(self.cadre_app)
-        self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="lightblue")
+        self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="gray20")
         self.canevaslobby.pack()
         # widgets du lobby
         # un listbox pour afficher les joueurs inscrit pour la partie à lancer
@@ -224,7 +224,7 @@ class Vue():
 
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
         self.canevas_minimap = Canvas(self.cadreminimap, width=self.taille_minimap, height=self.taille_minimap,
-                                      bg="pink")
+                                      bg="gray85")
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
