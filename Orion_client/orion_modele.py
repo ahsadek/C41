@@ -185,23 +185,24 @@ class Joueur():
                 ori = self.flotte[i][idori]
 
         # if ori: # deplacements entre des objets avec des id
-            if type_cible == "Etoile":
-                for j in self.parent.etoiles:
-                    if j.id == iddesti:
-                        ori.acquerir_cible(j, type_cible)
-                        return
-            elif type_cible == "Porte_de_ver":
-                cible = None
-                for j in self.parent.trou_de_vers:
-                    if j.porte_a.id == iddesti:
-                        cible = j.porte_a
-                    elif j.porte_b.id == iddesti:
-                        cible = j.porte_b
-                    if cible:
-                        ori.acquerir_cible(cible, type_cible)
-                        return
-            else:
-                pass
+            if ori != None:
+                if type_cible == "Etoile":
+                    for j in self.parent.etoiles:
+                        if j.id == iddesti:
+                            ori.acquerir_cible(j, type_cible)
+                            return
+                elif type_cible == "Porte_de_ver":
+                    cible = None
+                    for j in self.parent.trou_de_vers:
+                        if j.porte_a.id == iddesti:
+                            cible = j.porte_a
+                        elif j.porte_b.id == iddesti:
+                            cible = j.porte_b
+                        if cible:
+                            ori.acquerir_cible(cible, type_cible)
+                            return
+                else:
+                    pass
 
     def ciblerFlotteEspace(self, params):
         idOrigine, posDestinationX, posDestinationY, typeCible = params

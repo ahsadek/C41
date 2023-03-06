@@ -239,10 +239,10 @@ class Vue():
         self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
         self.champ_metal = Label(self.cadre_info_etoile)
         self.champ_energie = Label(self.cadre_info_etoile)
-        self.champ_existentielle = Label(self.cadre_info_etoile)
+        self.champ_population = Label(self.cadre_info_etoile)
         self.champ_metal.pack()
         self.champ_energie.pack()
-        self.champ_existentielle.pack()
+        self.champ_population.pack()
 
         #timer
         self.cadre_timer = Label(self.cadreoutils, text=(str(self.minutes) + ":" + str(self.secondes)), width=4, height=1, bg="pink")
@@ -261,7 +261,7 @@ class Vue():
                 i += 1
         self.champ_metal.config(text=("Metal : " + str(self.modele.etoiles[i].ressources["metal"])))
         self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])))
-        self.champ_existentielle.config(text=("Existentielle : " + str(self.modele.etoiles[i].ressources["existentielle"])))
+        self.champ_population.config(text=("Population : " + str(self.modele.etoiles[i].ressources["population"])))
         self.cadre_info_etoile.pack()
 
     def coloniser(self, evt, id):
@@ -583,7 +583,7 @@ class Vue():
                 if self.ma_selection[2] == "Vaisseau":
                     self.btn_coloniser.pack_forget()
                     self.btn_scanner.pack()
-                
+
 
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
