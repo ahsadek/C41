@@ -25,10 +25,6 @@ class Vue():
         self.zoom = 2
         self.ma_selection = None
         self.cadre_actif = None
-        self.nbrPoints = 100
-        self.nbrMetal = 0
-        self.nbrEnergie = 0
-        self.nbrPopulation = 0
         # cadre principal de l'application
         self.cadre_app = Frame(self.root, width=500, height=400, bg="red")
         self.cadre_app.pack(expand=1, fill=BOTH)
@@ -44,7 +40,7 @@ class Vue():
         self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
         self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(6,6)
         # self.imageVaissExtra = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExtra.png')).subsample(6, 6)
-
+        self.nbrEtoiles = 0
         # # sera charge apres l'initialisation de la partie, contient les donnees pour mettre l'interface a jour
         self.modele = None
         # # variable pour suivre le trace du multiselect
@@ -171,10 +167,10 @@ class Vue():
         self.creer_cadre_outils()
 
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
-        self.label_points = Label(self.cadreoutils, text="Points : " + str(self.nbrPoints))
-        self.label_metal = Label(self.cadreoutils, text="Métal : " + str(self.nbrMetal))
-        self.label_energie = Label(self.cadreoutils, text="Énergie : " + str(self.nbrEnergie))
-        self.label_population = Label(self.cadreoutils, text="Population : " + str(self.nbrPopulation))
+        self.label_points = Label(self.cadreoutils, text="Points : " + str(0))
+        self.label_metal = Label(self.cadreoutils, text="Métal : " + str(0))
+        self.label_energie = Label(self.cadreoutils, text="Énergie : " + str(0))
+        self.label_population = Label(self.cadreoutils, text="Population : " + str(0))
         self.label_points.pack(side=TOP)
         self.label_metal.pack(side=TOP)
         self.label_energie.pack(side=TOP)
@@ -252,7 +248,7 @@ class Vue():
         # fonction qui affiche le nombre d'items sur le jeu
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
         
-    def afficher_ressources(self, evt, id):
+    def afficher_ressources(self, evt, id, t):
         i = 0
         for etoile in self.modele.etoiles:
             if etoile.id == id:
@@ -263,24 +259,22 @@ class Vue():
         self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])))
         self.champ_population.config(text=("Population : " + str(self.modele.etoiles[i].ressources["population"])))
         self.cadre_info_etoile.pack()
+        self.deplacer_flotte(t)
 
-    def coloniser(self, evt, id):
+    def coloniser(self, evt, id, t):
+        self.modele.joueurs[self.mon_nom].nbrPoints += 15
         i = 0
         for etoile in self.modele.etoiles:
             if etoile.id == id:
                 break
             else:
                 i += 1
-        self.nbrMetal += self.modele.etoiles[i].ressources["metal"]
-        self.nbrEnergie += self.modele.etoiles[i].ressources["energie"]
-        self.nbrPopulation += self.modele.etoiles[i].ressources["population"]
-        self.nbrPoints += 15
-        self.label_points.config(text=("Points : " + str(self.nbrPoints)))
-        self.label_metal.config(text=("Metal : " + str(self.nbrMetal)))
-        self.label_energie.config(text=("Energie : " + str(self.nbrEnergie)))
-        self.label_existentielle.config(text=("Population : " + str(self.nbrPopulation)))
+        self.modele.joueurs[self.mon_nom].nbrMetal += self.modele.etoiles[i].ressources["metal"]
+        self.modele.joueurs[self.mon_nom].nbrEnergie += self.modele.etoiles[i].ressources["energie"]
+        self.modele.joueurs[self.mon_nom].nbrPopulation += self.modele.etoiles[i].ressources["population"]
         # self.btn_coloniser.config(state=DISABLED)
         self.btn_coloniser.pack_forget()
+        self.deplacer_flotte(t)
 
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
@@ -473,6 +467,18 @@ class Vue():
         couleur = joueur1.couleur
         self.canevas.itemconfig(id, fill=couleur)
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
+        #! Recuperer les ressources
+        self.nbrEtoiles = self.modele.joueurs[self.mon_nom].etoilescontrolees.__len__()
+        nbrRessources = self.nbrEtoiles * 2
+
+        self.modele.joueurs[self.mon_nom].nbrMetal += nbrRessources
+        self.modele.joueurs[self.mon_nom].nbrEnergie += nbrRessources
+        self.modele.joueurs[self.mon_nom].nbrPopulation += nbrRessources
+
+        self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)))
+        self.label_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].nbrMetal)))
+        self.label_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].nbrEnergie)))
+        self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)))
 
     # ajuster la liste des vaisseaux
     def lister_objet(self, obj, id):
@@ -566,8 +572,8 @@ class Vue():
 
         if t:  # il y a des tags
             if t[0] == "" and t[2] == "Etoile":
-                self.btn_scanner.config(command=lambda: self.afficher_ressources(evt, t[1]))
-                self.btn_coloniser.config(command=lambda: self.coloniser(evt, t[1]))
+                self.btn_scanner.config(command=lambda: self.afficher_ressources(evt, t[1], t))
+                self.btn_coloniser.config(command=lambda: self.coloniser(evt, t[1], t))
                 self.montrer_actions_etoile()
                 
                 if self.ma_selection != None:    
@@ -591,11 +597,6 @@ class Vue():
                     self.montrer_etoile_selection()
                 elif t[2] == "Cargo" or t[2] == "Vaisseau":
                     self.montrer_flotte_selection()
-            elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
-                if self.ma_selection:
-                    self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
-                self.ma_selection = None
-                self.canevas.delete("marqueur")
                 
         else:  # si on n'a pas choisi une etoile (on veut se deplacer vers l'espace)
             #interface
@@ -618,6 +619,13 @@ class Vue():
                 else:
                     print("Vous devez choisir un point d'origine")
                     self.ma_selection = None
+
+    def deplacer_flotte(self, t):
+        if ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
+            if self.ma_selection:
+                self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
+            self.ma_selection = None
+            self.canevas.delete("marqueur")
 
     def montrer_etoile_selection(self):
         self.cadreinfochoix.pack(fill=BOTH)

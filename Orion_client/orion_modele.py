@@ -159,7 +159,10 @@ class Joueur():
         self.actions = {"creervaisseau": self.creervaisseau,
                         "ciblerflotte": self.ciblerflotte,
                         "ciblerflotteespace": self.ciblerFlotteEspace}
-        self.ressources = None
+        self.nbrPoints = 0
+        self.nbrMetal = 0
+        self.nbrEnergie = 0
+        self.nbrPopulation = 0
 
     def creervaisseau(self, params):
         type_vaisseau = params[0]
