@@ -69,13 +69,13 @@ class Vue():
     # le splash (ce qui 'splash' à l'écran lors du démarrage)
     # sera le cadre visuel initial lors du lancement de l'application
     def creer_cadre_splash(self, urlserveur, mon_nom, msg_initial):
-        bg = PhotoImage(file="images/login.png")
+        bg = PhotoImage(file="images/login.jpg")
         self.cadre_splash = Frame(self.cadre_app)
         # un canvas est utilisé pour 'dessiner' les widgets de cette fenêtre voir 'create_window' plus bas
         #self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="gray20")
         self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480)
-        self.canevas_splash.create_image(0, 0, image=bg, anchor=NW)
         self.canevas_splash.pack()
+        self.canevas_splash.create_image(0, 0, image=bg, anchor="nw")
 
         # creation ds divers widgets (champ de texte 'Entry' et boutons cliquables (Button)
         self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE)
