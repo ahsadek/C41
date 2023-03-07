@@ -423,6 +423,8 @@ class Vue():
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
                 t = j.taille * self.zoom
+                # imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile)
+                # self.canevas.itemconfig(imageEtoile)
                 self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
                                          fill=mod.joueurs[i].couleur,
                                          tags=(j.proprietaire, str(j.id), "Etoile"))
@@ -432,6 +434,16 @@ class Vue():
                 self.canevas_minimap.create_rectangle(minix, miniy, minix + 3, miniy + 3,
                                                       fill=mod.joueurs[i].couleur,
                                                       tags=(j.proprietaire, str(j.id), "Etoile"))
+                # # recuperer dimensions image
+                # imageEtoile_width = self.imageEtoile.width()
+                # imageEtoile_height = self.imageEtoile.height()
+                #
+                # # centrer image
+                # image_x = i.x - imageEtoile_width / 2
+                # image_y = i.y - imageEtoile_height / 2
+                #
+                # # positioner image au centre
+                # self.canevas.coords(imageEtoile, image_x, image_y)
 
     def afficher_mini(self, evt):  # univers(self, mod):
         self.canevas_minimap.delete("mini")

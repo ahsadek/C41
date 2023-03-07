@@ -297,8 +297,9 @@ class Modele():
                 self.etoiles.remove(p)
                 np -= 1
 
-        couleurs = ["red", "blue", "lightgreen", "yellow",
-                    "lightblue", "pink", "gold", "purple"]
+        couleurs = ["#F49F0A", "#7f827d", "#5FA550", "#4894FE", "#8B5588", "#EB5C68",
+                     "#85130f", "#735645"]
+        # jaune, gris, vert, bleu, mauve, rose, rouge, brun
         for i in joueurs:
             etoile = etoile_occupee.pop(0)
             self.joueurs[i] = Joueur(self, i, etoile, couleurs.pop(0))
@@ -311,8 +312,8 @@ class Modele():
                 self.etoiles.append(Etoile(self, x1, y1))
 
         # IA- creation des ias
-        couleursia = ["orange", "green", "cyan",
-                      "SeaGreen1", "turquoise1", "firebrick1"]
+        couleursia = ["SeaGreen1", "green", "cyan",
+                      "orange", "turquoise1", "firebrick1"]
         for i in range(ias):
             self.joueurs["IA_" + str(i)] = IA(self, "IA_" + str(i), etoile_occupee.pop(0), couleursia.pop(0))
 
