@@ -37,8 +37,8 @@ class Vue():
         
         # affichage/images
         dossier_images = os.path.join(os.path.curdir, 'images')
-        self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
-        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(6,6)
+        self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6, 6)
+        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(6, 6)
         # self.imageVaissExtra = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExtra.png')).subsample(6, 6)
         self.nbrEtoiles = 0
         # # sera charge apres l'initialisation de la partie, contient les donnees pour mettre l'interface a jour
@@ -69,13 +69,14 @@ class Vue():
     # le splash (ce qui 'splash' à l'écran lors du démarrage)
     # sera le cadre visuel initial lors du lancement de l'application
     def creer_cadre_splash(self, urlserveur, mon_nom, msg_initial):
-        bg = PhotoImage(file="images/login.jpg")
+        #bgLogin = PhotoImage(file="images/bleuNebula.png")
         self.cadre_splash = Frame(self.cadre_app)
         # un canvas est utilisé pour 'dessiner' les widgets de cette fenêtre voir 'create_window' plus bas
-        #self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="gray20")
-        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480)
-        self.canevas_splash.pack()
-        self.canevas_splash.create_image(0, 0, image=bg, anchor="nw")
+        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="grey20")
+        self.canevas_splash.pack(fill=BOTH, expand=YES)
+
+        #bgLogin = self.canevas_splash.create_image(0, 0, anchor=NW, image=bgLogin)
+        #self.canevas_splash.itemconfig(bgLogin)
 
         # creation ds divers widgets (champ de texte 'Entry' et boutons cliquables (Button)
         self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE)
