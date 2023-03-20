@@ -387,22 +387,20 @@ class Vue():
         yl = self.canevas.winfo_height()
 
     def afficher_decor(self, mod):
-        # on cree un arriere fond de petites etoieles NPC pour le look
+        # on cree un arriere fond de petites etoiles NPC pour le look
         for i in range(len(mod.etoiles) * 50):
             x = random.randrange(int(mod.largeur))
             y = random.randrange(int(mod.hauteur))
             n = random.randrange(3) + 1
             col = random.choice(["LightYellow", "azure1", "pink"])
             self.canevas.create_oval(x, y, x + n, y + n, fill=col, tags=("fond",))
+
         # affichage des etoiles
         for i in mod.etoiles:
             t = i.taille * self.zoom
             imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile)
             self.canevas.itemconfig(imageEtoile)
-            # cercle vide large
-            # self.canevas.create_oval(i.x - t + 2, i.y - t + 2, i.x + t - 2, i.y + t - 2,
-            #                          fill='', outline=col, width=4,
-            #                          tags=(i.proprietaire, str(i.id), "Etoile",))
+
             # cercle plein petit
             self.canevas.create_oval(i.x + t, i.y + t, i.x - t, i.y - t,
                                      fill=col, outline=col, width=4,
@@ -422,28 +420,30 @@ class Vue():
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
-                t = j.taille * self.zoom
-                # imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile)
-                # self.canevas.itemconfig(imageEtoile)
-                self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
+                t = j.taille * self.zoom * 0.7
+                imageEtoile = self.canevas.create_image(j.x, j.y, anchor=NW, image=self.imageEtoile)
+                self.canevas.itemconfig(imageEtoile)
+                self.canevas.create_oval(j.x + t, j.y + t, j.x - t, j.y - t,
                                          fill=mod.joueurs[i].couleur,
                                          tags=(j.proprietaire, str(j.id), "Etoile"))
+
+                # recuperer dimensions image
+                imageEtoile_width = self.imageEtoile.width()
+                imageEtoile_height = self.imageEtoile.height()
+
+                # centrer image
+                image_x = j.x - imageEtoile_width / 2
+                image_y = j.y - imageEtoile_height / 2
+
+                # positioner image au centre
+                self.canevas.coords(imageEtoile, image_x, image_y)
+
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
                 miniy = j.y / self.modele.hauteur * self.taille_minimap
                 self.canevas_minimap.create_rectangle(minix, miniy, minix + 3, miniy + 3,
                                                       fill=mod.joueurs[i].couleur,
                                                       tags=(j.proprietaire, str(j.id), "Etoile"))
-                # # recuperer dimensions image
-                # imageEtoile_width = self.imageEtoile.width()
-                # imageEtoile_height = self.imageEtoile.height()
-                #
-                # # centrer image
-                # image_x = i.x - imageEtoile_width / 2
-                # image_y = i.y - imageEtoile_height / 2
-                #
-                # # positioner image au centre
-                # self.canevas.coords(imageEtoile, image_x, image_y)
 
     def afficher_mini(self, evt):  # univers(self, mod):
         self.canevas_minimap.delete("mini")
