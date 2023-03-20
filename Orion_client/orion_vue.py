@@ -42,7 +42,7 @@ class Vue():
         # affichage/images
         dossier_images = os.path.join(os.path.curdir, 'images')
         self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
-        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(6,6)
+        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(15,15)
         # self.imageVaissExtra = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExtra.png')).subsample(6, 6)
 
         # # sera charge apres l'initialisation de la partie, contient les donnees pour mettre l'interface a jour
@@ -532,10 +532,23 @@ class Vue():
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
                     tailleF = j.taille * self.zoom
-                    if k == "Vaisseau":
-                        self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
-                                                      (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
+                    if k == "Vaisseau":     #TODO supprimer les images au chaque mouvement
+                        imageVaissExplo = self.canevas.create_image(j.x, j.y, anchor=NW, image=self.imageVaissExplo)
+                        self.canevas.itemconfig(imageVaissExplo)
+                        self.canevas.create_rectangle((j.x + tailleF), (j.y + tailleF),
+                                                      (j.x - tailleF), (j.y - tailleF), fill=i.couleur,
                                                       tags=(j.proprietaire, str(j.id), "Vaisseau", k, "artefact"))
+                        # recuperer dimensions image
+                        imageVaissExplo_width = self.imageVaissExplo.width()
+                        imageVaissExplo_height = self.imageVaissExplo.height()
+
+                        # centrer image
+                        image_x = j.x - imageVaissExplo_width / 2
+                        image_y = j.y - imageVaissExplo_height / 2
+
+                        # positioner image au centre
+                        self.canevas.coords(imageVaissExplo, image_x, image_y)
+
                     elif k == "Cargo":
                         # self.dessiner_cargo(j,tailleF,i,k)
                         self.dessiner_cargo(j, tailleF, i, k)
@@ -565,10 +578,10 @@ class Vue():
                                  (x + dt), (y + dt), fill="yellow",
                                  tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
 
-    def dessiner_cargo1(self, j, tailleF, i, k):
-        self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
-                                 (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
-                                 tags=(j.proprietaire, str(j.id), "Cargo", k, "artefact"))
+    # def dessiner_cargo1(self, j, tailleF, i, k):
+    #     self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
+    #                              (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
+    #                              tags=(j.proprietaire, str(j.id), "Cargo", k, "artefact"))
 
     def cliquer_cosmos(self, evt):
         t = self.canevas.gettags(CURRENT)
