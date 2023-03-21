@@ -72,6 +72,7 @@ class Vaisseau():
         self.arriver = {"Etoile": self.arriver_etoile,
                         "Porte_de_vers": self.arriver_porte,
                         "Espace": self.arriver_espace}
+        self.liste_laser = []
 
     def jouer_prochain_coup(self, trouver_nouveau=0):
         if self.cible != 0:
@@ -130,6 +131,9 @@ class Vaisseau():
             self.y = trou.porte_a.y
         self.cible = 0
         return ["Porte_de_ver", cible]
+    
+    def tirer_laser(self, cible, type_cible):
+        self.liste_laser.append(Laser(self, self.proprietaire, self.x, self.y, cible, type_cible))
 
 
 
@@ -142,6 +146,15 @@ class Cargo(Vaisseau):
         self.vitesse = 1
         self.cible = 0
         self.ang = 0
+        
+        
+class Laser(Vaisseau):
+    def __init__(self, parent, nom, x, y, cible, type_cible):
+        super().__init__(parent, nom, x, y)
+        self.taille = 2
+        self.vitesse = 25
+        self.cible = cible
+        self.type_cible = type_cible
 
 
 class Joueur():

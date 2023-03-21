@@ -233,7 +233,9 @@ class Vue():
         self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
         self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
         self.btn_coloniser = Button(self.cadre_actions_etoile, text="Coloniser")
+        self.btn_attaquer = Button(self.cadre_actions_etoile, text="Attaquer")
         #self.btn_scanner.pack()
+        
 
         # cadre info etoile
         self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
@@ -484,6 +486,22 @@ class Vue():
         self.ma_selection = None
         self.canevas.delete("marqueur")
         self.cadreinfochoix.pack_forget()
+        
+    #ajouter un laser a la liste de laser d'un vaisseau
+    def attaquer(self, id_parent, id_cible, type_cible, proprietaire_cible):
+        vaisseau_parent = self.modele.joueurs[self.mon_nom].flotte["Vaisseau"][id_parent]
+        if type_cible == "Etoile":
+            i = 0
+            for etoile in self.modele.etoiles:
+                if etoile.id == id_cible:
+                    cible = etoile
+                    break
+                else:
+                    i += 1
+        else:
+            cible = self.modele.joueurs[proprietaire_cible].flotte[type_cible][id_cible]
+            
+        vaisseau_parent.tirer_laser(cible, type_cible)
 
     def afficher_jeu(self):
         mod = self.modele
@@ -524,12 +542,18 @@ class Vue():
                         self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                                                       (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                                       tags=(j.proprietaire, str(j.id), "Vaisseau", k, "artefact"))
+                        for laser in j.liste_laser:
+                            tailleF = laser.taille * self.zoom
+                            self.dessiner_laser(laser, tailleF, i, "Laser")
                     elif k == "Cargo":
                         # self.dessiner_cargo(j,tailleF,i,k)
                         self.dessiner_cargo(j, tailleF, i, k)
                         # self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
                         #                          (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                         #                          tags=(j.proprietaire, str(j.id), "Flotte",k,"artefact"))
+
+                        
+                    
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
@@ -557,6 +581,16 @@ class Vue():
         self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Cargo", k, "artefact"))
+        
+        
+    def dessiner_laser(self, obj, tailleF, joueur, type_obj):
+        self.canevas.create_oval((obj.x - tailleF), (obj.y - tailleF),
+                                 (obj.x + tailleF), (obj.y + tailleF), fill=joueur.couleur,
+                                 tags=(obj.proprietaire, str(obj.id), "Laser", type_obj, "artefact"))
+        #self.canevas.create_rectangle((obj.x), (obj.y),
+         #                                             (obj.x + obj.width * zoom), (obj.y + obj.height * zoom), fill=joueur.couleur,
+          #                                            tags=(obj.proprietaire, str(obj.id), "Laser", type_obj, "artefact"))
+
 
     def cliquer_cosmos(self, evt):
         t = self.canevas.gettags(CURRENT)
@@ -574,6 +608,7 @@ class Vue():
                     if self.ma_selection[2] == "Cargo":
                         self.btn_coloniser.pack()
                         self.btn_scanner.pack_forget()
+                        self.btn_attaquer.pack_forget()
                         # self.btn_coloniser.config(command=self.forget_button)
                         # self.messageArrivee = Label(self.cadreoutils, text="Étoile colonisée!")
                         # self.cadreoutils.after(2000, self.messageArrivee.pack())
@@ -582,8 +617,16 @@ class Vue():
             if self.ma_selection != None:
                 if self.ma_selection[2] == "Vaisseau":
                     self.btn_coloniser.pack_forget()
+                    self.btn_attaquer.pack_forget()
                     self.btn_scanner.pack()
 
+
+            #si on appuie sur un vaisseau ennemi
+            if self.ma_selection != None:
+                if (t[0] != self.mon_nom and t[0] != "") and (t[2] == "Vaisseau" or t[2] == "Cargo" or t[2] == "VaisseauCombat" or t[2] == "Etoile") and self.ma_selection[2] == "Vaisseau":
+                    self.btn_attaquer.config(command=lambda: self.attaquer(self.ma_selection[1], t[1], t[2], t[0]))
+                    self.btn_attaquer.pack()
+                    self.montrer_actions_etoile()
 
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
@@ -602,6 +645,7 @@ class Vue():
             print("Region inconnue")
             self.btn_coloniser.pack_forget()
             self.btn_scanner.pack_forget()
+            self.btn_attaquer.pack_forget()
 
             #deplacement dans le vide
             if self.ma_selection != None:
