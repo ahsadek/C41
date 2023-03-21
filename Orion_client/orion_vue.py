@@ -42,7 +42,7 @@ class Vue():
         # affichage/images
         dossier_images = os.path.join(os.path.curdir, 'images')
         self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
-        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(15,15)
+        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(18,18)
         # self.imageVaissExtra = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExtra.png')).subsample(6, 6)
 
         # # sera charge apres l'initialisation de la partie, contient les donnees pour mettre l'interface a jour
@@ -417,6 +417,8 @@ class Vue():
             # positioner image au centre
             self.canevas.coords(imageEtoile, image_x, image_y)
 
+
+
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
@@ -531,11 +533,11 @@ class Vue():
             for k in i.flotte:
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
-                    tailleF = j.taille * self.zoom
-                    if k == "Vaisseau":     #TODO supprimer les images au chaque mouvement
-                        imageVaissExplo = self.canevas.create_image(j.x, j.y, anchor=NW, image=self.imageVaissExplo)
+                    tailleF = j.taille * self.zoom * 0.60
+                    if k == "Vaisseau":
+                        imageVaissExplo = self.canevas.create_image(j.x, j.y, anchor=NW, image=self.imageVaissExplo, tags=("artefact"))
                         self.canevas.itemconfig(imageVaissExplo)
-                        self.canevas.create_rectangle((j.x + tailleF), (j.y + tailleF),
+                        self.canevas.create_oval((j.x + tailleF), (j.y + tailleF),
                                                       (j.x - tailleF), (j.y - tailleF), fill=i.couleur,
                                                       tags=(j.proprietaire, str(j.id), "Vaisseau", k, "artefact"))
                         # recuperer dimensions image
@@ -543,8 +545,8 @@ class Vue():
                         imageVaissExplo_height = self.imageVaissExplo.height()
 
                         # centrer image
-                        image_x = j.x - imageVaissExplo_width / 2
-                        image_y = j.y - imageVaissExplo_height / 2
+                        image_x = j.x - 40
+                        image_y = j.y - 25
 
                         # positioner image au centre
                         self.canevas.coords(imageVaissExplo, image_x, image_y)
