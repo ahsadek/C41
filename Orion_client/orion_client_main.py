@@ -162,6 +162,7 @@ class Controleur():
             # envoyer les messages au modele et a la vue de faire leur job
             self.modele.jouer_prochain_coup(self.cadrejeu)
             self.vue.afficher_jeu()
+            self.modele.production_ressource()
         else:
             self.cadrejeu -= 1
             self.onjoue = 1
