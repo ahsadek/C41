@@ -7,6 +7,42 @@ from id import *
 from helper import Helper as hlp
 
 
+class Mine_metaux():
+    def __init__(self):
+        self.nom = "mine metaux"
+        self.coutMetaux = 0
+        self.coutEnergie = 0
+        self.coutPopulation = 0
+        self.niveau = 1
+
+class Centrale_electrique():
+    def __init__(self):
+        self.nom = "centrale_electrique"
+        self.coutMetaux = 0
+        self.coutEnergie = 0
+        self.coutPopulation = 0
+
+class Usine_vaiseau():
+    def __init__(self):
+        self.nom = "usine vaiseau"
+        self.coutMetaux = 0
+        self.coutEnergie = 0
+        self.coutPopulation = 0
+
+class Laboratoire_recherche ():
+    def __init__(self):
+        self.nom = "laboratoire recherche"
+        self.coutMetaux = 0
+        self.coutEnergie = 0
+        self.coutPopulation = 0
+
+class Systeme_defense ():
+    def __init__(self):
+        self.nom = "systeme defense"
+        self.coutMetaux = 0
+        self.coutEnergie = 0
+        self.coutPopulation = 0
+
 class Porte_de_vers():
     def __init__(self, parent, x, y, couleur, taille):
         self.parent = parent
@@ -47,6 +83,7 @@ class Etoile():
         self.ressources = {"metal": random.randrange(500, 1000),
                            "energie": random.randrange(5000, 10000),
                            "population": random.randrange(50, 100)}
+
 
 class Espace():
     def __init__(self, x, y):
@@ -172,7 +209,18 @@ class Joueur():
         self.actions = {"creervaisseau": self.creervaisseau,
                         "ciblerflotte": self.ciblerflotte,
                         "ciblerflotteespace": self.ciblerFlotteEspace}
-        self.ressources = None
+        self.nbrPoints = 0
+        self.nbrMetal = 0
+        self.nbrEnergie = 0
+        self.nbrPopulation = 0
+
+        self.batiments = {
+            "mines_metaux": [Mine_metaux()],
+            "centrales_electriques": [Centrale_electrique()],
+            "usines_vaiseau": [],
+            "laboratoires_recherche": [],
+            "systemes_defense": []
+        }
 
     def creervaisseau(self, params):
         type_vaisseau = params[0]
