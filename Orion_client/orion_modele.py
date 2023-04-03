@@ -112,6 +112,10 @@ class Vaisseau():
         self.liste_laser = []
 
     def jouer_prochain_coup(self, trouver_nouveau=0):
+        for laser in self.liste_laser:
+            laser.avancer()
+            if laser.x == laser.cible.x and laser.y == laser.cible.y:
+                self.liste_laser.remove(laser)
         if self.cible != 0:
             return self.avancer()
         elif trouver_nouveau:
@@ -132,6 +136,8 @@ class Vaisseau():
         if self.cible != 0:
             x = self.cible.x
             y = self.cible.y
+            if self.cible != 0:
+                self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
             if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
                 type_obj = type(self.cible).__name__
@@ -173,7 +179,6 @@ class Vaisseau():
         self.liste_laser.append(Laser(self, self.proprietaire, self.x, self.y, cible, type_cible))
 
 
-
 class Cargo(Vaisseau):
     def __init__(self, parent, nom, x, y):
         Vaisseau.__init__(self, parent, nom, x, y)
@@ -189,11 +194,23 @@ class Laser(Vaisseau):
     def __init__(self, parent, nom, x, y, cible, type_cible):
         super().__init__(parent, nom, x, y)
         self.taille = 2
-        self.vitesse = 25
+        self.vitesse = 5
         self.cible = cible
         self.type_cible = type_cible
+        self.arriver = {"Etoile": self.arriver_etoile,
+                        "Vaisseau": self.arriver_vaisseau}
 
 
+    def arriver_etoile(self):
+        cible = self.cible
+        return ["Etoile", cible]
+
+
+    def arriver_vaisseau(self):
+        cible = self.cible
+        return ["Vaisseau", cible]
+    
+    
 class Joueur():
     def __init__(self, parent, nom, etoilemere, couleur):
         self.id = get_prochain_id()
@@ -208,7 +225,8 @@ class Joueur():
                        "Cargo": {}}
         self.actions = {"creervaisseau": self.creervaisseau,
                         "ciblerflotte": self.ciblerflotte,
-                        "ciblerflotteespace": self.ciblerFlotteEspace}
+                        "ciblerflotteespace": self.ciblerFlotteEspace,
+                        "creerlaser": self.creerlaser}
         self.nbrPoints = 0
         self.nbrMetal = 0
         self.nbrEnergie = 0
@@ -233,6 +251,27 @@ class Joueur():
         if self.nom == self.parent.parent.mon_nom:
             self.parent.parent.lister_objet(type_vaisseau, v.id)
         return v
+    
+    
+    def creerlaser(self, params):
+        id_parent, id_cible, proprietaire_cible, type_cible = params
+        
+        vaisseau_parent = self.parent.joueurs[self.nom].flotte["Vaisseau"][id_parent]
+        if type_cible == "Etoile":
+            for etoile in self.parent.etoiles:
+                if etoile.id == id_cible:
+                    cible = etoile
+                    break
+            for joueur in self.parent.joueurs:
+                for etoile in self.parent.joueurs[joueur].etoilescontrolees:
+                    if etoile.id == id_cible:
+                        cible = etoile
+                        break
+        else:
+            cible = self.parent.joueurs[proprietaire_cible].flotte[type_cible][id_cible]
+        
+        vaisseau_parent.tirer_laser(cible, type_cible)
+    
 
     def ciblerflotte(self, ids):
         idori, iddesti, type_cible = ids
@@ -271,7 +310,8 @@ class Joueur():
         for i in self.flotte.keys():
             if idOrigine in self.flotte[i]:
                 ori = self.flotte[i][idOrigine]
-        ori.acquerir_cible_espace(posDestinationX, posDestinationY, "Espace")
+        if ori != None:
+            ori.acquerir_cible_espace(posDestinationX, posDestinationY, "Espace")
         return
 
     def jouer_prochain_coup(self):
