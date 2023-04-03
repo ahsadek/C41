@@ -501,13 +501,15 @@ class Vue():
     def attaquer(self, id_parent, id_cible, type_cible, proprietaire_cible):
         vaisseau_parent = self.modele.joueurs[self.mon_nom].flotte["Vaisseau"][id_parent]
         if type_cible == "Etoile":
-            i = 0
             for etoile in self.modele.etoiles:
                 if etoile.id == id_cible:
                     cible = etoile
                     break
-                else:
-                    i += 1
+            for joueur in self.modele.joueurs:
+                for etoile in self.modele.joueurs[joueur].etoilescontrolees:
+                    if etoile.id == id_cible:
+                        cible = etoile
+                        break
         else:
             cible = self.modele.joueurs[proprietaire_cible].flotte[type_cible][id_cible]
             
