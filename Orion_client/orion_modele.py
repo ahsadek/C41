@@ -344,11 +344,9 @@ class Modele():
     def production_ressource(self):
         for joueur in self.joueurs:
             for etoile in self.joueurs[joueur].etoilescontrolees:
-                etoile.batiments["mines_metaux"]
+                #etoile.batiments["mines_metaux"]
                 self.joueurs[joueur].nbrMetal += etoile.batiments["mines_metaux"].quantite * etoile.batiments["mines_metaux"].tauxProduction
                 self.joueurs[joueur].nbrEnergie += etoile.batiments["centrales_electriques"].quantite * etoile.batiments["centrales_electriques"].tauxProduction
-                print(self.joueurs[joueur].nbrMetal)
-                print(self.joueurs[joueur].nbrEnergie)
 
     def creer_troudevers(self, n):
         bordure = 10
