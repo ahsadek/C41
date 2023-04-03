@@ -205,9 +205,11 @@ class Vue():
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
+        self.btn_ConstruireBatiment = Button(self.cadreinfochoix, text="Batiment")
 
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
+        self.btn_ConstruireBatiment.pack()
 
         self.cadreinfoliste = Frame(self.cadreinfo)
 
@@ -233,7 +235,6 @@ class Vue():
         self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
         self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
         self.btn_coloniser = Button(self.cadre_actions_etoile, text="Coloniser")
-        #self.btn_scanner.pack()
 
         # cadre info etoile
         self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
@@ -276,9 +277,20 @@ class Vue():
         self.modele.joueurs[self.mon_nom].nbrMetal += self.modele.etoiles[i].ressources["metal"]
         self.modele.joueurs[self.mon_nom].nbrEnergie += self.modele.etoiles[i].ressources["energie"]
         self.modele.joueurs[self.mon_nom].nbrPopulation += self.modele.etoiles[i].ressources["population"]
-        # self.btn_coloniser.config(state=DISABLED)
         self.btn_coloniser.pack_forget()
         self.deplacer_flotte(t)
+
+    def construireBatiment(self, evt, id, t):
+        print("Test")
+        i = 0
+        for etoile in self.modele.etoiles:
+            if etoile.id == id:
+                break
+            else:
+                i + 1
+        self.modele.joueurs[self.mon_nom].nbrPoints += 5
+        print(self.modele.joueurs[self.mon_nom].nbrPoints)
+        #self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)))
 
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
@@ -471,17 +483,13 @@ class Vue():
         couleur = joueur1.couleur
         self.canevas.itemconfig(id, fill=couleur)
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
-        #! Recuperer les ressources
-        self.nbrEtoiles = self.modele.joueurs[self.mon_nom].etoilescontrolees.__len__()
-        nbrRessources = self.nbrEtoiles * 2
 
-        self.modele.joueurs[self.mon_nom].nbrMetal += nbrRessources
-        self.modele.joueurs[self.mon_nom].nbrEnergie += nbrRessources
-        self.modele.joueurs[self.mon_nom].nbrPopulation += nbrRessources
+        metal = self.modele.joueurs[self.mon_nom].nbrMetal
+        energie = self.modele.joueurs[self.mon_nom].nbrEnergie
 
         self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)))
-        self.label_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].nbrMetal)))
-        self.label_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].nbrEnergie)))
+        self.label_metal.config(text=("Metal : " + str(metal)))
+        self.label_energie.config(text=("Energie : " + str(energie)))
         self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)))
 
     # ajuster la liste des vaisseaux
@@ -574,6 +582,10 @@ class Vue():
         self.cadreinfochoix.pack_forget()
         self.cadre_info_etoile.pack_forget()
 
+        if self.ma_selection != None:
+            if t[0] == self.mon_nom and t[2] == "Etoile" :
+                self.btn_ConstruireBatiment.config(command=lambda: self.construireBatiment(evt, t[1], t))
+                
         if t:  # il y a des tags
             if t[0] == "" and t[2] == "Etoile":
                 self.btn_scanner.config(command=lambda: self.afficher_ressources(evt, t[1], t))
