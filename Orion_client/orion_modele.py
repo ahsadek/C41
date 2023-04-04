@@ -83,6 +83,7 @@ class Etoile():
         self.ressources = {"metal": random.randrange(500, 1000),
                            "energie": random.randrange(5000, 10000),
                            "population": random.randrange(50, 100)}
+        self.hp = 5000
 
 
 class Espace():
@@ -100,7 +101,9 @@ class Vaisseau():
         self.x = x
         self.y = y
         self.espace_cargo = 0
-        self.energie = 100
+        self.hp = 100
+        self.delai_tir = 100        #delai en ms entre les tirs de lasers du vaisseau
+        self.en_tir = False
         self.taille = 5
         self.vitesse = 25
         self.cible = 0
@@ -112,10 +115,23 @@ class Vaisseau():
         self.liste_laser = []
 
     def jouer_prochain_coup(self, trouver_nouveau=0):
+        #lasers
         for laser in self.liste_laser:
-            laser.avancer()
-            if laser.x == laser.cible.x and laser.y == laser.cible.y:
+            if laser.cible.hp <= 0:
                 self.liste_laser.remove(laser)
+                continue
+            laser.avancer()
+            if hlp.calcDistance(laser.x, laser.y, laser.cible.x, laser.cible.y) <= laser.vitesse:
+                laser.cible.hp -= laser.puissance
+                if laser.cible.hp <= 0:
+                    if laser.type_cible == "Cargo":
+                        del laser.cible.parent.flotte["Cargo"][laser.cible.id]
+                    elif laser.type_cible == "Vaisseau":
+                        del laser.cible.parent.flotte["Vaisseau"][laser.cible.id]
+                    elif laser.type_cible == "Etoile":
+                        laser.cible.proprietaire = laser.proprietaire
+                self.liste_laser.remove(laser)
+                    
         if self.cible != 0:
             return self.avancer()
         elif trouver_nouveau:
@@ -136,8 +152,7 @@ class Vaisseau():
         if self.cible != 0:
             x = self.cible.x
             y = self.cible.y
-            if self.cible != 0:
-                self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
+            self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
             if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
                 type_obj = type(self.cible).__name__
@@ -183,7 +198,7 @@ class Cargo(Vaisseau):
     def __init__(self, parent, nom, x, y):
         Vaisseau.__init__(self, parent, nom, x, y)
         self.cargo = 1000
-        self.energie = 500
+        self.hp = 500
         self.taille = 6
         self.vitesse = 1
         self.cible = 0
@@ -193,6 +208,7 @@ class Cargo(Vaisseau):
 class Laser(Vaisseau):
     def __init__(self, parent, nom, x, y, cible, type_cible):
         super().__init__(parent, nom, x, y)
+        self.puissance = 5
         self.taille = 2
         self.vitesse = 5
         self.cible = cible
