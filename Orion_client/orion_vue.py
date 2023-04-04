@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 ##  version 2022 14 mars - jmd
-
+import tkinter
 from tkinter import *
-from tkinter import ttk, PhotoImage, Image
+from tkinter import ttk, PhotoImage
+from PIL import Image as img
+from PIL import ImageTk
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
@@ -41,11 +43,13 @@ class Vue():
         
         # affichage/images
         dossier_images = os.path.join(os.path.curdir, 'images')
-
-        self.imageVaissExplo = Image.open("vaisseauExploration.png")
+        print("curent dir" +os.getcwd())
 
         self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
-        self.imageVaissExploPhoto = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(18, 18)
+        # self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(18, 18)
+        self.imageVaissExplo = img.open('./images/vaisseauExploration.png')
+        self.imageVaissExplo = self.imageVaissExplo.resize((192, 108))
+
         # self.imageVaissExtra = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExtra.png')).subsample(6, 6)
 
         # # sera charge apres l'initialisation de la partie, contient les donnees pour mettre l'interface a jour
@@ -552,20 +556,18 @@ class Vue():
                                          i.x + i.pulse, i.y + i.pulse, outline=i.couleur, width=2, fill="grey15",
                                          tags=("", i.id, "Porte_de_ver", "objet_spatial"))
 
+
+
     def dessiner_vaisseau(self, obj, tailleF, joueur, type_obj):
         t = obj.taille * self.zoom
-        imageVaissExplo = self.canevas.create_image(obj.x, obj.y, anchor=NW, image=self.imageVaissExploPhoto, tags=("artefact"))
 
 
 
-        self.canevas.itemconfig(imageVaissExplo)
-        imageVaissExplo.rotate(15)
+        imageVaissExplo = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= ImageTk.PhotoImage(self.imageVaissExplo), tags=("artefact")) # tranformer imageVaissExplo en photoimage
+
         self.canevas.create_oval((obj.x + tailleF), (obj.y + tailleF),
                                  (obj.x - tailleF), (obj.y - tailleF), fill=joueur.couleur,
                                  tags=(obj.proprietaire, str(obj.id), "Vaisseau", type_obj, "artefact"))
-        # recuperer dimensions image
-        imageVaissExplo_width = self.imageVaissExploPhoto.width()
-        imageVaissExplo_height = self.imageVaissExploPhoto.height()
 
         # centrer image
         image_x = obj.x - 40
