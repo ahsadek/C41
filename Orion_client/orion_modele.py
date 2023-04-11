@@ -5,6 +5,7 @@ import random
 import ast
 from id import *
 from helper import Helper as hlp
+from threading import Timer
 
 
 class Mine_metaux():
@@ -113,17 +114,20 @@ class Vaisseau():
                         "Porte_de_vers": self.arriver_porte,
                         "Espace": self.arriver_espace}
         self.liste_laser = []
+        self.firing = False
 
     def jouer_prochain_coup(self, trouver_nouveau=0):
         #lasers
         for laser in self.liste_laser:
             if laser.cible.hp <= 0:
+                self.firing = False
                 self.liste_laser.remove(laser)
                 continue
             laser.avancer()
             if hlp.calcDistance(laser.x, laser.y, laser.cible.x, laser.cible.y) <= laser.vitesse:
                 laser.cible.hp -= laser.puissance
                 if laser.cible.hp <= 0:
+                    self.firing = False
                     if laser.type_cible == "Cargo":
                         del laser.cible.parent.flotte["Cargo"][laser.cible.id]
                     elif laser.type_cible == "Vaisseau":
@@ -192,6 +196,9 @@ class Vaisseau():
     
     def tirer_laser(self, cible, type_cible):
         self.liste_laser.append(Laser(self, self.proprietaire, self.x, self.y, cible, type_cible))
+        if (self.firing == True):
+            tir = Timer(0.25, self.tirer_laser, args=(cible, type_cible))
+            tir.start()
 
 
 class Cargo(Vaisseau):
@@ -286,7 +293,9 @@ class Joueur():
         else:
             cible = self.parent.joueurs[proprietaire_cible].flotte[type_cible][id_cible]
         
+        vaisseau_parent.firing = True
         vaisseau_parent.tirer_laser(cible, type_cible)
+        
     
 
     def ciblerflotte(self, ids):
