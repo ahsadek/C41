@@ -618,6 +618,8 @@ class Vue():
                 if self.ma_selection[2] == "Vaisseau":
                     self.btn_coloniser.pack_forget()
                     self.btn_attaquer.pack_forget()
+                    self.btn_attaquer.config(command=lambda: self.attaquer(self.ma_selection[1], t[1], t[2], t[0]))
+                    self.btn_attaquer.pack()
                     self.btn_scanner.pack()
 
 

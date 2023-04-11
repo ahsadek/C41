@@ -160,6 +160,8 @@ class Vaisseau():
             self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
             if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
+                self.x = x
+                self.y = y
                 type_obj = type(self.cible).__name__
                 rep = self.arriver[type_obj]()
                 return rep
