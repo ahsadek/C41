@@ -651,7 +651,7 @@ class Vue():
                     print(f'Y: {positionDestinationY}')
 
                     self.parent.cibler_flotte_espace(self.ma_selection[1], positionDestinationX, positionDestinationY,
-                                                     "espace")
+                                                     "espace", self.ma_selection[2])
                     self.canevas.delete("marqueur")
                     self.ma_selection = None
                 else:
@@ -661,7 +661,7 @@ class Vue():
     def deplacer_flotte(self, t):
         if ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
             if self.ma_selection:
-                self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
+                self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2], self.ma_selection[2])
             self.ma_selection = None
             self.canevas.delete("marqueur")
 

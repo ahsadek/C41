@@ -84,7 +84,7 @@ class Etoile():
         self.ressources = {"metal": random.randrange(500, 1000),
                            "energie": random.randrange(5000, 10000),
                            "population": random.randrange(50, 100)}
-        self.hp = 5000
+        self.hp = 500
 
 
 class Espace():
@@ -106,7 +106,7 @@ class Vaisseau():
         self.delai_tir = 100        #delai en ms entre les tirs de lasers du vaisseau
         self.en_tir = False
         self.taille = 5
-        self.vitesse = 25
+        self.vitesse = 10
         self.cible = 0
         self.type_cible = None
         self.angle_cible = 0
@@ -133,6 +133,7 @@ class Vaisseau():
                     elif laser.type_cible == "Vaisseau":
                         del laser.cible.parent.flotte["Vaisseau"][laser.cible.id]
                     elif laser.type_cible == "Etoile":
+                        print("test")
                         laser.cible.proprietaire = laser.proprietaire
                 self.liste_laser.remove(laser)
                     
@@ -175,8 +176,6 @@ class Vaisseau():
     def arriver_espace(self):
         self.parent.log.append(
             ["Arrive:", self.parent.parent.cadre_courant, "Espace", self.id, self.cible.id, self.cible.proprietaire])
-        # if not self.cible.proprietaire:
-        #     self.cible.proprietaire = self.proprietaire
         cible = self.cible
         self.cible = 0
         return ["Espace", cible]
@@ -217,7 +216,7 @@ class Laser(Vaisseau):
         super().__init__(parent, nom, x, y)
         self.puissance = 5
         self.taille = 2
-        self.vitesse = 5
+        self.vitesse = 25
         self.cible = cible
         self.type_cible = type_cible
         self.arriver = {"Etoile": self.arriver_etoile,
@@ -262,7 +261,7 @@ class Joueur():
             "laboratoires_recherche": [],
             "systemes_defense": []
         }
-
+        
     def creervaisseau(self, params):
         type_vaisseau = params[0]
         if type_vaisseau == "Cargo":
@@ -299,8 +298,11 @@ class Joueur():
     
 
     def ciblerflotte(self, ids):
-        idori, iddesti, type_cible = ids
+        idori, iddesti, type_cible, type_origine = ids
         ori = None
+        
+        if type_origine == "Vaisseau":
+            self.parent.joueurs[self.nom].flotte["Vaisseau"][idori].firing = False
 
         if idori in self.flotte["Cargo"]:       # laisser ce bout de code ici, sinon tout casse
             ori = self.flotte["Cargo"][idori]
@@ -330,7 +332,9 @@ class Joueur():
                     pass
 
     def ciblerFlotteEspace(self, params):
-        idOrigine, posDestinationX, posDestinationY, typeCible = params
+        idOrigine, posDestinationX, posDestinationY, typeCible, type_origine = params
+        if type_origine == "Vaisseau":
+            self.parent.joueurs[self.nom].flotte["Vaisseau"][idOrigine].firing = False
         ori = None
         for i in self.flotte.keys():
             if idOrigine in self.flotte[i]:
