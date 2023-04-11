@@ -46,9 +46,9 @@ class Vue():
         print("curent dir" +os.getcwd())
 
         self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
-        # self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(18, 18)
-        self.imageVaissExplo = img.open('./images/vaisseauExploration.png')
-        self.imageVaissExplo = self.imageVaissExplo.resize((192, 108))
+        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(4, 4)
+        self.imageVaissCargo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauCargo.png')).subsample(4, 4)
+        self.imageVaissFighter = PhotoImage(file=os.path.join(dossier_images, 'vaisseauFighter.png')).subsample(4, 4)
 
         # self.imageVaissExtra = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExtra.png')).subsample(6, 6)
 
@@ -540,7 +540,7 @@ class Vue():
             for k in i.flotte:
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
-                    tailleF = j.taille * self.zoom * 0.60
+                    tailleF = j.taille * self.zoom * 0.65
                     if k == "Vaisseau":
                         self.dessiner_vaisseau(j, tailleF, i, k)
                     elif k == "Cargo":
@@ -561,33 +561,48 @@ class Vue():
     def dessiner_vaisseau(self, obj, tailleF, joueur, type_obj):
         t = obj.taille * self.zoom
 
-
-
-        imageVaissExplo = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= ImageTk.PhotoImage(self.imageVaissExplo), tags=("artefact")) # tranformer imageVaissExplo en photoimage
+        imageVaissExploCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= self.imageVaissExplo, tags=("artefact")) # tranformer imageVaissExplo en photoimage
 
         self.canevas.create_oval((obj.x + tailleF), (obj.y + tailleF),
                                  (obj.x - tailleF), (obj.y - tailleF), fill=joueur.couleur,
                                  tags=(obj.proprietaire, str(obj.id), "Vaisseau", type_obj, "artefact"))
 
         # centrer image
-        image_x = obj.x - 40
-        image_y = obj.y - 25
+        image_x = obj.x - 25
+        image_y = obj.y - 15
 
         # positioner image au centre
-        self.canevas.coords(imageVaissExplo, image_x, image_y)
+        self.canevas.coords(imageVaissExploCanvas, image_x, image_y)
 
 
     def dessiner_cargo(self, obj, tailleF, joueur, type_obj):
         t = obj.taille * self.zoom
-        a = obj.ang
-        x, y = hlp.getAngledPoint(obj.angle_cible, int(t / 4 * 3), obj.x, obj.y)
-        dt = t / 2
-        self.canevas.create_oval((obj.x - tailleF), (obj.y - tailleF),
-                                 (obj.x + tailleF), (obj.y + tailleF), fill=joueur.couleur,
-                                 tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
-        self.canevas.create_oval((x - dt), (y - dt),
-                                 (x + dt), (y + dt), fill="yellow",
-                                 tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
+
+        self.canevas.create_rectangle(obj.x - tailleF - 15, obj.y + tailleF + 40, obj.x + tailleF + 15, obj.y + 30, fill="grey")
+
+        imageVaissCargoCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= self.imageVaissCargo, tags=("artefact")) # tranformer imageVaissExplo en photoimage
+
+        self.canevas.create_oval((obj.x + tailleF), (obj.y + tailleF),
+                                 (obj.x - tailleF), (obj.y - tailleF), fill=joueur.couleur,
+                                 tags=(obj.proprietaire, str(obj.id), "Vaisseau", type_obj, "artefact"))
+
+
+        # centrer image
+        image_x = obj.x - 25
+        image_y = obj.y - 15
+
+        # positioner image au centre
+        self.canevas.coords(imageVaissCargoCanvas, image_x, image_y)
+
+        # a = obj.ang
+        # x, y = hlp.getAngledPoint(obj.angle_cible, int(t / 4 * 3), obj.x, obj.y)
+        # dt = t / 2
+        # self.canevas.create_oval((obj.x - tailleF), (obj.y - tailleF),
+        #                          (obj.x + tailleF), (obj.y + tailleF), fill=joueur.couleur,
+        #                          tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
+        # self.canevas.create_oval((x - dt), (y - dt),
+        #                          (x + dt), (y + dt), fill="yellow",
+        #                          tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
 
     def cliquer_cosmos(self, evt):
         t = self.canevas.gettags(CURRENT)
