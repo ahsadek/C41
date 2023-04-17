@@ -8,40 +8,61 @@ from helper import Helper as hlp
 
 
 class Mine_metaux():
-    def __init__(self):
+    def __init__(self, propriataire):
+        self.propriataire = propriataire
         self.nom = "mine metaux"
-        self.coutMetaux = 0
-        self.coutEnergie = 0
-        self.coutPopulation = 0
+        self.coutMetaux = 50
+        self.coutEnergie = 200
+        self.coutPopulation = 10
+        self.quantite = 1
         self.niveau = 1
+        self.augmentationNiveau = 1
+        self.tauxProduction = 5
 
 class Centrale_electrique():
-    def __init__(self):
+    def __init__(self, propriataire):
+        self.propriataire = propriataire
         self.nom = "centrale_electrique"
-        self.coutMetaux = 0
-        self.coutEnergie = 0
-        self.coutPopulation = 0
+        self.coutMetaux = 200
+        self.coutEnergie = 50
+        self.coutPopulation = 10
+        self.quantite = 2
+        self.niveau = 1
+        self.augmentationNiveau = 1
+        self.tauxProduction = 5
 
 class Usine_vaiseau():
-    def __init__(self):
+    def __init__(self, propriataire):
+        self.propriataire = propriataire
         self.nom = "usine vaiseau"
-        self.coutMetaux = 0
-        self.coutEnergie = 0
-        self.coutPopulation = 0
+        self.coutMetaux = 200
+        self.coutEnergie = 200
+        self.coutPopulation = 30
+        self.quantite = 0
+        self.niveau = 1
+        self.augmentationNiveau = 1
 
 class Laboratoire_recherche ():
-    def __init__(self):
+    def __init__(self, propriataire):
+        self.propriataire = propriataire
         self.nom = "laboratoire recherche"
-        self.coutMetaux = 0
-        self.coutEnergie = 0
-        self.coutPopulation = 0
+        self.coutMetaux = 100
+        self.coutEnergie = 300
+        self.coutPopulation = 40
+        self.quantite = 0
+        self.niveau = 1
+        self.augmentationNiveau = 1
 
 class Systeme_defense ():
-    def __init__(self):
+    def __init__(self, propriataire):
+        self.propriataire = propriataire
         self.nom = "systeme defense"
-        self.coutMetaux = 0
-        self.coutEnergie = 0
-        self.coutPopulation = 0
+        self.coutMetaux = 500
+        self.coutEnergie = 300
+        self.coutPopulation = 30
+        self.quantite = 0
+        self.niveau = 1
+        self.augmentationNiveau = 1
 
 class Porte_de_vers():
     def __init__(self, parent, x, y, couleur, taille):
@@ -84,6 +105,13 @@ class Etoile():
                            "energie": random.randrange(5000, 10000),
                            "population": random.randrange(50, 100)}
 
+        self.batiments = {
+            "mines_metaux": Mine_metaux(self.id),
+            "centrales_electriques": Centrale_electrique(self.id),
+            "usines_vaiseau": Usine_vaiseau(self.id),
+            "laboratoires_recherche": Laboratoire_recherche(self.id),
+            "systemes_defense": Systeme_defense(self.id)
+        }
 
 class Espace():
     def __init__(self, x, y):
@@ -214,14 +242,6 @@ class Joueur():
         self.nbrEnergie = 0
         self.nbrPopulation = 0
 
-        self.batiments = {
-            "mines_metaux": [Mine_metaux()],
-            "centrales_electriques": [Centrale_electrique()],
-            "usines_vaiseau": [],
-            "laboratoires_recherche": [],
-            "systemes_defense": []
-        }
-
     def creervaisseau(self, params):
         type_vaisseau = params[0]
         if type_vaisseau == "Cargo":
@@ -333,6 +353,13 @@ class Modele():
         self.creer_troudevers(nb_trou)
         self.minutes = selected_timer
         self.secondes = 00
+
+    def production_ressource(self):
+        for joueur in self.joueurs:
+            for etoile in self.joueurs[joueur].etoilescontrolees:
+                #etoile.batiments["mines_metaux"]
+                self.joueurs[joueur].nbrMetal += etoile.batiments["mines_metaux"].quantite * etoile.batiments["mines_metaux"].tauxProduction
+                self.joueurs[joueur].nbrEnergie += etoile.batiments["centrales_electriques"].quantite * etoile.batiments["centrales_electriques"].tauxProduction
 
     def creer_troudevers(self, n):
         bordure = 10
