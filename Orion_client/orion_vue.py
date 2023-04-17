@@ -519,20 +519,10 @@ class Vue():
         self.cadreinfochoix.pack_forget()
         
     #ajouter un laser a la liste de laser d'un vaisseau
-    def attaquer(self, id_parent, id_cible, type_cible, proprietaire_cible):
-        vaisseau_parent = self.modele.joueurs[self.mon_nom].flotte["Vaisseau"][id_parent]
-        if type_cible == "Etoile":
-            i = 0
-            for etoile in self.modele.etoiles:
-                if etoile.id == id_cible:
-                    cible = etoile
-                    break
-                else:
-                    i += 1
-        else:
-            cible = self.modele.joueurs[proprietaire_cible].flotte[type_cible][id_cible]
-            
-        vaisseau_parent.tirer_laser(cible, type_cible)
+    def attaquer(self, id_parent, id_cible, type_cible, proprietaire_cible): 
+        self.parent.creer_laser(id_parent, id_cible, proprietaire_cible, type_cible)
+        
+        #vaisseau_parent.tirer_laser(cible, type_cible)
 
     def afficher_jeu(self):
         mod = self.modele
@@ -692,7 +682,7 @@ class Vue():
                     print(f'Y: {positionDestinationY}')
 
                     self.parent.cibler_flotte_espace(self.ma_selection[1], positionDestinationX, positionDestinationY,
-                                                     "espace")
+                                                     "espace", self.ma_selection[2])
                     self.canevas.delete("marqueur")
                     self.ma_selection = None
                 else:
@@ -702,7 +692,7 @@ class Vue():
     def deplacer_flotte(self, t):
         if ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
             if self.ma_selection:
-                self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
+                self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2], self.ma_selection[2])
             self.ma_selection = None
             self.canevas.delete("marqueur")
 

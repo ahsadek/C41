@@ -223,17 +223,20 @@ class Controleur():
     def creer_vaisseau(self, type_vaisseau):
         self.actionsrequises.append([self.mon_nom, "creervaisseau", [type_vaisseau]])
 
-    def cibler_flotte(self, idorigine, iddestination, type_cible):
-        self.actionsrequises.append([self.mon_nom, "ciblerflotte", [idorigine, iddestination, type_cible]])
+    def cibler_flotte(self, idorigine, iddestination, type_cible, type_origine):
+        self.actionsrequises.append([self.mon_nom, "ciblerflotte", [idorigine, iddestination, type_cible, type_origine]])
 
-    def cibler_flotte_espace(self, idorigine, positionDestinationX, positionDestinationY, type_cible):
-        self.actionsrequises.append([self.mon_nom, "ciblerflotteespace", [idorigine, positionDestinationX, positionDestinationY, type_cible]])
+    def cibler_flotte_espace(self, idorigine, positionDestinationX, positionDestinationY, type_cible, type_origine):
+        self.actionsrequises.append([self.mon_nom, "ciblerflotteespace", [idorigine, positionDestinationX, positionDestinationY, type_cible, type_origine]])
 
     def afficher_etoile(self, joueur, cible):
         self.vue.afficher_etoile(joueur, cible)
 
     def lister_objet(self, objet, id):
         self.vue.lister_objet(objet, id)
+        
+    def creer_laser(self, id_vaisseau_parent, id_cible, proprietaire_cible,type_cible):
+        self.actionsrequises.append([self.mon_nom, "creerlaser", [id_vaisseau_parent, id_cible, proprietaire_cible, type_cible]])
         
     #timer
     def update_timer(self):
