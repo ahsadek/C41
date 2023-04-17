@@ -122,7 +122,7 @@ class Espace():
         self.y = y
         self.proprietaire = None
 
-class Vaisseau():
+class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
     def __init__(self, parent, nom, x, y):
         self.parent = parent
         self.id = get_prochain_id()
@@ -236,7 +236,27 @@ class Cargo(Vaisseau):
         self.cargo = 1000
         self.hp = 500
         self.taille = 6
-        self.vitesse = 1
+        self.vitesse = 5
+        self.cible = 0
+        self.ang = 0
+
+class Combat(Vaisseau):
+    def __init__(self, parent, nom, x, y):
+        Vaisseau.__init__(self, parent, nom, x, y)
+        self.combat = 1000
+        self.energie = 500
+        self.taille = 6
+        self.vitesse = 12
+        self.cible = 0
+        self.ang = 0
+
+class Exploration(Vaisseau):
+    def __init__(self, parent, nom, x, y):
+        Vaisseau.__init__(self, parent, nom, x, y)
+        self.exploration = 1000
+        self.energie = 500
+        self.taille = 6
+        self.vitesse = 25
         self.cible = 0
         self.ang = 0
         
@@ -464,8 +484,9 @@ class Modele():
                 self.etoiles.remove(p)
                 np -= 1
 
-        couleurs = ["red", "blue", "lightgreen", "yellow",
-                    "lightblue", "pink", "gold", "purple"]
+        couleurs = ["#F49F0A", "#7f827d", "#5FA550", "#4894FE", "#8B5588", "#EB5C68",
+                     "#85130f", "#735645"]
+        # jaune, gris, vert, bleu, mauve, rose, rouge, brun
         for i in joueurs:
             etoile = etoile_occupee.pop(0)
             self.joueurs[i] = Joueur(self, i, etoile, couleurs.pop(0))
@@ -478,8 +499,8 @@ class Modele():
                 self.etoiles.append(Etoile(self, x1, y1))
 
         # IA- creation des ias
-        couleursia = ["orange", "green", "cyan",
-                      "SeaGreen1", "turquoise1", "firebrick1"]
+        couleursia = ["SeaGreen1", "green", "cyan",
+                      "orange", "turquoise1", "firebrick1"]
         for i in range(ias):
             self.joueurs["IA_" + str(i)] = IA(self, "IA_" + str(i), etoile_occupee.pop(0), couleursia.pop(0))
 

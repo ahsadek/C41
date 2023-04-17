@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 ##  version 2022 14 mars - jmd
-
+import tkinter
 from tkinter import *
 from tkinter import ttk, PhotoImage
+from PIL import Image as img
+from PIL import ImageTk
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
@@ -37,8 +39,13 @@ class Vue():
         
         # affichage/images
         dossier_images = os.path.join(os.path.curdir, 'images')
-        self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6, 6)
-        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(6, 6)
+        print("curent dir" +os.getcwd())
+
+        self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
+        self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(4, 4)
+        self.imageVaissCargo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauCargo.png')).subsample(4, 4)
+        self.imageVaissFighter = PhotoImage(file=os.path.join(dossier_images, 'vaisseauFighter.png')).subsample(4, 4)
+
         # self.imageVaissExtra = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExtra.png')).subsample(6, 6)
         self.nbrEtoiles = 0
         # # sera charge apres l'initialisation de la partie, contient les donnees pour mettre l'interface a jour
@@ -210,6 +217,12 @@ class Vue():
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
         self.btn_ConstruireBatiment.pack()
+        # self.btncreercombat = Button(self.cadreinfochoix, text="Combat")
+        # self.btncreercombat.bind("<Button>", self.creer_vaisseau)
+        # self.btncreerexplo = Button(self.cadreinfochoix, text="Explo")
+        # self.btncreerexplo.bind("<Button>", self.creer_vaisseau)
+        # self.btncreercombat.pack()
+        # self.btncreerexplo.pack()
 
         self.cadreinfoliste = Frame(self.cadreinfo)
 
@@ -412,22 +425,20 @@ class Vue():
         yl = self.canevas.winfo_height()
 
     def afficher_decor(self, mod):
-        # on cree un arriere fond de petites etoieles NPC pour le look
+        # on cree un arriere fond de petites etoiles NPC pour le look
         for i in range(len(mod.etoiles) * 50):
             x = random.randrange(int(mod.largeur))
             y = random.randrange(int(mod.hauteur))
             n = random.randrange(3) + 1
             col = random.choice(["LightYellow", "azure1", "pink"])
             self.canevas.create_oval(x, y, x + n, y + n, fill=col, tags=("fond",))
+
         # affichage des etoiles
         for i in mod.etoiles:
             t = i.taille * self.zoom
             imageEtoile = self.canevas.create_image(i.x, i.y, anchor=NW, image=self.imageEtoile)
             self.canevas.itemconfig(imageEtoile)
-            # cercle vide large
-            # self.canevas.create_oval(i.x - t + 2, i.y - t + 2, i.x + t - 2, i.y + t - 2,
-            #                          fill='', outline=col, width=4,
-            #                          tags=(i.proprietaire, str(i.id), "Etoile",))
+
             # cercle plein petit
             self.canevas.create_oval(i.x + t, i.y + t, i.x - t, i.y - t,
                                      fill=col, outline=col, width=4,
@@ -444,13 +455,29 @@ class Vue():
             # positioner image au centre
             self.canevas.coords(imageEtoile, image_x, image_y)
 
+
+
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
-                t = j.taille * self.zoom
-                self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
+                t = j.taille * self.zoom * 0.7
+                imageEtoile = self.canevas.create_image(j.x, j.y, anchor=NW, image=self.imageEtoile)
+                self.canevas.itemconfig(imageEtoile)
+                self.canevas.create_oval(j.x + t, j.y + t, j.x - t, j.y - t,
                                          fill=mod.joueurs[i].couleur,
                                          tags=(j.proprietaire, str(j.id), "Etoile"))
+
+                # recuperer dimensions image
+                imageEtoile_width = self.imageEtoile.width()
+                imageEtoile_height = self.imageEtoile.height()
+
+                # centrer image
+                image_x = j.x - imageEtoile_width / 2
+                image_y = j.y - imageEtoile_height / 2
+
+                # positioner image au centre
+                self.canevas.coords(imageEtoile, image_x, image_y)
+
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
                 miniy = j.y / self.modele.hauteur * self.taille_minimap
@@ -508,8 +535,21 @@ class Vue():
         self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), fg=self.returnCouleur(), font="Verdana 10 bold")
 
     # ajuster la liste des vaisseaux
-    def lister_objet(self, obj, id):
-        self.info_liste.insert(END, obj + "; " + id)
+    def lister_objet(self, joueur):
+        self.info_liste.delete(0, END)
+        self.refresh_liste_vaisseau(joueur)
+       #self.info_liste.insert(END, obj + "; " + id)
+        
+        
+    def refresh_liste_vaisseau(self, joueur):
+        #incomplete
+        if self.mon_nom == joueur.nom:
+            for dictionary in joueur.flotte:
+                for vaisseau in joueur.flotte[dictionary]:
+                    vaisseau = joueur.flotte[dictionary][vaisseau]
+                    self.info_liste.insert(END, vaisseau.__class__.__name__ + "; " + vaisseau.id)
+        #ajouter les autres vaisseau
+        
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
@@ -558,23 +598,17 @@ class Vue():
             for k in i.flotte:
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
-                    tailleF = j.taille * self.zoom
+                    tailleF = j.taille * self.zoom * 0.65
                     if k == "Vaisseau":
-                        self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
-                                                      (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
-                                                      tags=(j.proprietaire, str(j.id), "Vaisseau", k, "artefact"))
+                        # self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
+                        #                               (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
+                        #                               tags=(j.proprietaire, str(j.id), "Vaisseau", k, "artefact"))
+                        self.dessiner_vaisseau(j, tailleF, i, k)
                         for laser in j.liste_laser:
                             tailleF = laser.taille * self.zoom
                             self.dessiner_laser(laser, tailleF, i, "Laser")
                     elif k == "Cargo":
-                        # self.dessiner_cargo(j,tailleF,i,k)
                         self.dessiner_cargo(j, tailleF, i, k)
-                        # self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
-                        #                          (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
-                        #                          tags=(j.proprietaire, str(j.id), "Flotte",k,"artefact"))
-
-                        
-                    
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
@@ -586,32 +620,58 @@ class Vue():
                                          i.x + i.pulse, i.y + i.pulse, outline=i.couleur, width=2, fill="grey15",
                                          tags=("", i.id, "Porte_de_ver", "objet_spatial"))
 
-    def dessiner_cargo(self, obj, tailleF, joueur, type_obj):
-        t = obj.taille * self.zoom
-        a = obj.ang
-        x, y = hlp.getAngledPoint(obj.angle_cible, int(t / 4 * 3), obj.x, obj.y)
-        dt = t / 2
-        self.canevas.create_oval((obj.x - tailleF), (obj.y - tailleF),
-                                 (obj.x + tailleF), (obj.y + tailleF), fill=joueur.couleur,
-                                 tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
-        self.canevas.create_oval((x - dt), (y - dt),
-                                 (x + dt), (y + dt), fill="yellow",
-                                 tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
 
-    def dessiner_cargo1(self, j, tailleF, i, k):
-        self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
-                                 (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
-                                 tags=(j.proprietaire, str(j.id), "Cargo", k, "artefact"))
-        
-        
     def dessiner_laser(self, obj, tailleF, joueur, type_obj):
         self.canevas.create_oval((obj.x - tailleF), (obj.y - tailleF),
                                  (obj.x + tailleF), (obj.y + tailleF), fill=joueur.couleur,
                                  tags=(obj.proprietaire, str(obj.id), "Laser", type_obj, "artefact"))
-        #self.canevas.create_rectangle((obj.x), (obj.y),
-         #                                             (obj.x + obj.width * zoom), (obj.y + obj.height * zoom), fill=joueur.couleur,
-          #                                            tags=(obj.proprietaire, str(obj.id), "Laser", type_obj, "artefact"))
 
+
+    def dessiner_vaisseau(self, obj, tailleF, joueur, type_obj):
+        t = obj.taille * self.zoom
+
+        imageVaissExploCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= self.imageVaissExplo, tags=("artefact")) # tranformer imageVaissExplo en photoimage
+
+        self.canevas.create_oval((obj.x + tailleF), (obj.y + tailleF),
+                                 (obj.x - tailleF), (obj.y - tailleF), fill=joueur.couleur,
+                                 tags=(obj.proprietaire, str(obj.id), "Vaisseau", type_obj, "artefact"))
+
+        # centrer image
+        image_x = obj.x - 25
+        image_y = obj.y - 15
+
+        # positioner image au centre
+        self.canevas.coords(imageVaissExploCanvas, image_x, image_y)
+
+
+    def dessiner_cargo(self, obj, tailleF, joueur, type_obj):
+        t = obj.taille * self.zoom
+
+        self.canevas.create_rectangle(obj.x - tailleF - 15, obj.y + tailleF + 40, obj.x + tailleF + 15, obj.y + 30, fill="grey", tags=("artefact"))
+
+        imageVaissCargoCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= self.imageVaissCargo, tags=("artefact")) # tranformer imageVaissExplo en photoimage
+
+        self.canevas.create_oval((obj.x + tailleF), (obj.y + tailleF),
+                                 (obj.x - tailleF), (obj.y - tailleF), fill=joueur.couleur,
+                                 tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
+
+
+        # centrer image
+        image_x = obj.x - 25
+        image_y = obj.y - 15
+
+        # positioner image au centre
+        self.canevas.coords(imageVaissCargoCanvas, image_x, image_y)
+
+        # a = obj.ang
+        # x, y = hlp.getAngledPoint(obj.angle_cible, int(t / 4 * 3), obj.x, obj.y)
+        # dt = t / 2
+        # self.canevas.create_oval((obj.x - tailleF), (obj.y - tailleF),
+        #                          (obj.x + tailleF), (obj.y + tailleF), fill=joueur.couleur,
+        #                          tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
+        # self.canevas.create_oval((x - dt), (y - dt),
+        #                          (x + dt), (y + dt), fill="yellow",
+        #                          tags=(obj.proprietaire, str(obj.id), "Cargo", type_obj, "artefact"))
 
     def cliquer_cosmos(self, evt):
         t = self.canevas.gettags(CURRENT)
