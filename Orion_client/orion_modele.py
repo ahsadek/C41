@@ -55,7 +55,7 @@ class Espace():
         self.y = y
         self.proprietaire = None
 
-class Vaisseau():
+class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
     def __init__(self, parent, nom, x, y):
         self.parent = parent
         self.id = get_prochain_id()
@@ -139,7 +139,27 @@ class Cargo(Vaisseau):
         self.cargo = 1000
         self.energie = 500
         self.taille = 6
-        self.vitesse = 1
+        self.vitesse = 5
+        self.cible = 0
+        self.ang = 0
+
+class Combat(Vaisseau):
+    def __init__(self, parent, nom, x, y):
+        Vaisseau.__init__(self, parent, nom, x, y)
+        self.combat = 1000
+        self.energie = 500
+        self.taille = 6
+        self.vitesse = 12
+        self.cible = 0
+        self.ang = 0
+
+class Exploration(Vaisseau):
+    def __init__(self, parent, nom, x, y):
+        Vaisseau.__init__(self, parent, nom, x, y)
+        self.exploration = 1000
+        self.energie = 500
+        self.taille = 6
+        self.vitesse = 25
         self.cible = 0
         self.ang = 0
 

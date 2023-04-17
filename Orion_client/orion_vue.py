@@ -212,9 +212,15 @@ class Vue():
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
+        # self.btncreercombat = Button(self.cadreinfochoix, text="Combat")
+        # self.btncreercombat.bind("<Button>", self.creer_vaisseau)
+        # self.btncreerexplo = Button(self.cadreinfochoix, text="Explo")
+        # self.btncreerexplo.bind("<Button>", self.creer_vaisseau)
 
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
+        # self.btncreercombat.pack()
+        # self.btncreerexplo.pack()
 
         self.cadreinfoliste = Frame(self.cadreinfo)
 
@@ -578,7 +584,7 @@ class Vue():
     def dessiner_cargo(self, obj, tailleF, joueur, type_obj):
         t = obj.taille * self.zoom
 
-        self.canevas.create_rectangle(obj.x - tailleF - 15, obj.y + tailleF + 40, obj.x + tailleF + 15, obj.y + 30, fill="grey")
+        self.canevas.create_rectangle(obj.x - tailleF - 15, obj.y + tailleF + 40, obj.x + tailleF + 15, obj.y + 30, fill="grey", tags=("artefact"))
 
         imageVaissCargoCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= self.imageVaissCargo, tags=("artefact")) # tranformer imageVaissExplo en photoimage
 
