@@ -232,8 +232,8 @@ class Controleur():
     def afficher_etoile(self, joueur, cible):
         self.vue.afficher_etoile(joueur, cible)
 
-    def lister_objet(self, objet, id):
-        self.vue.lister_objet(objet, id)
+    def lister_objet(self, joueur):
+        self.vue.lister_objet(joueur)
         
     def creer_laser(self, id_vaisseau_parent, id_cible, proprietaire_cible,type_cible):
         self.actionsrequises.append([self.mon_nom, "creerlaser", [id_vaisseau_parent, id_cible, proprietaire_cible, type_cible]])
