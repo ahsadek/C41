@@ -105,7 +105,7 @@ class Etoile():
         self.ressources = {"metal": random.randrange(500, 1000),
                            "energie": random.randrange(5000, 10000),
                            "population": random.randrange(50, 100)}
-        self.hp = 500
+        self.hp = 1000
 
         self.batiments = {
             "mines_metaux": Mine_metaux(self.id),
@@ -161,8 +161,13 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
                     elif laser.type_cible == "Vaisseau":
                         del laser.cible.parent.flotte["Vaisseau"][laser.cible.id]
                     elif laser.type_cible == "Etoile":
-                        print("test")
+                        ancien_proprietaire = laser.cible.proprietaire
                         laser.cible.proprietaire = laser.proprietaire
+                        self.parent.etoilescontrolees.append(laser.cible)
+                        ancien_joueur = self.parent.parent.joueurs[ancien_proprietaire]
+                        ancien_joueur.etoilescontrolees.remove(laser.cible)
+                        self.parent.parent.parent.afficher_etoile(self.parent.nom, laser.cible)
+                        laser.cible.hp = 1000
                 self.liste_laser.remove(laser)
                     
         if self.cible != 0:
@@ -234,7 +239,7 @@ class Cargo(Vaisseau):
     def __init__(self, parent, nom, x, y):
         Vaisseau.__init__(self, parent, nom, x, y)
         self.cargo = 1000
-        self.hp = 500
+        self.hp = 300
         self.taille = 6
         self.vitesse = 5
         self.cible = 0
