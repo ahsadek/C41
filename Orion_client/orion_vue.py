@@ -706,6 +706,9 @@ class Vue():
                         print("cargo")
 
             if self.ma_selection != None:
+                if self.ma_selection[2] == "Vaisseau" or "Cargo":
+                    if t[2] == "Porte_de_ver":
+                        self.deplacer_flotte(t)
                 if self.ma_selection[2] == "Vaisseau":
                     self.btn_coloniser.pack_forget()
                     self.btn_attaquer.pack_forget()
