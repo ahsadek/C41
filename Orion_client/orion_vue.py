@@ -178,10 +178,12 @@ class Vue():
         self.creer_cadre_outils()
 
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
+        self.label_ressources = Label(self.cadreoutils, text="Ressources :")
         self.label_points = Label(self.cadreoutils, text="Points : " + str(0))
         self.label_metal = Label(self.cadreoutils, text="Métal : " + str(0))
         self.label_energie = Label(self.cadreoutils, text="Énergie : " + str(0))
         self.label_population = Label(self.cadreoutils, text="Population : " + str(0))
+        self.label_ressources.pack(side=TOP)
         self.label_points.pack(side=TOP)
         self.label_metal.pack(side=TOP)
         self.label_energie.pack(side=TOP)
@@ -254,9 +256,11 @@ class Vue():
 
         # cadre info etoile
         self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
+        self.champ_info = Label(self.cadre_info_etoile)
         self.champ_metal = Label(self.cadre_info_etoile)
         self.champ_energie = Label(self.cadre_info_etoile)
         self.champ_population = Label(self.cadre_info_etoile)
+        self.champ_info.pack()
         self.champ_metal.pack()
         self.champ_energie.pack()
         self.champ_population.pack()
@@ -281,10 +285,12 @@ class Vue():
             else:
                 i += 1
         if self.modele.joueurs[self.mon_nom].etoilemere.id == id:
+            self.champ_info.config(text="Informations :")
             self.champ_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].etoilemere.ressources["metal"])))
             self.champ_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].etoilemere.ressources["energie"])))
             self.champ_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].etoilemere.ressources["population"])))
         else:
+            self.champ_info.config(text="Informations :")
             self.champ_metal.config(text=("Metal : " + str(self.modele.etoiles[i].ressources["metal"])))
             self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])))
             self.champ_population.config(text=("Population : " + str(self.modele.etoiles[i].ressources["population"])))
@@ -529,6 +535,7 @@ class Vue():
         metal = self.modele.joueurs[self.mon_nom].nbrMetal
         energie = self.modele.joueurs[self.mon_nom].nbrEnergie
 
+        self.label_ressources.config(fg=self.returnCouleur(), font="Verdana 10 bold")
         self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)), fg=self.returnCouleur(), font="Verdana 10 bold")
         self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
         self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
