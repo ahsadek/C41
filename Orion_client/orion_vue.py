@@ -714,10 +714,11 @@ class Vue():
 
             #si on appuie sur un vaisseau ennemi
             if self.ma_selection != None:
-                if (t[0] != self.mon_nom and t[0] != "") and (t[2] == "Vaisseau" or t[2] == "Cargo" or t[2] == "VaisseauCombat" or t[2] == "Etoile") and self.ma_selection[2] == "Vaisseau":
-                    self.btn_attaquer.config(command=lambda: self.attaquer(self.ma_selection[1], t[1], t[2], t[0]))
-                    self.btn_attaquer.pack()
-                    self.montrer_actions_etoile()
+                if len(t) >= 3:
+                    if (t[0] != self.mon_nom and t[0] != "") and (t[2] == "Vaisseau" or t[2] == "Cargo" or t[2] == "VaisseauCombat" or t[2] == "Etoile") and self.ma_selection[2] == "Vaisseau":
+                        self.btn_attaquer.config(command=lambda: self.attaquer(self.ma_selection[1], t[1], t[2], t[0]))
+                        self.btn_attaquer.pack()
+                        self.montrer_actions_etoile()
 
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
