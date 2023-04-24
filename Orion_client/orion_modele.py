@@ -304,10 +304,11 @@ class Joueur():
                         "ciblerflotte": self.ciblerflotte,
                         "ciblerflotteespace": self.ciblerFlotteEspace,
                         "creerlaser": self.creerlaser}
+
         self.nbrPoints = 0
-        self.nbrMetal = 0
-        self.nbrEnergie = 0
-        self.nbrPopulation = 0
+        self.nbrMetal = random.randrange(500, 1000)
+        self.nbrEnergie = random.randrange(500, 1000)
+        self.nbrPopulation = random.randrange(50, 100)
 
         self.batiments = {
             "mines_metaux": [Mine_metaux(self.nom)],
@@ -464,6 +465,14 @@ class Modele():
                 #etoile.batiments["mines_metaux"]
                 self.joueurs[joueur].nbrMetal += etoile.batiments["mines_metaux"].quantite * etoile.batiments["mines_metaux"].tauxProduction
                 self.joueurs[joueur].nbrEnergie += etoile.batiments["centrales_electriques"].quantite * etoile.batiments["centrales_electriques"].tauxProduction
+
+    def production_pointage(self):
+        for joueur in self.joueurs:
+            for etoile in self.joueurs[joueur].etoilescontrolees:
+                pointsMetaux = self.joueurs[joueur].nbrMetal * 0.005
+                pointsEnergie = self.joueurs[joueur].nbrEnergie * 0.005
+                self.joueurs[joueur].nbrPoints += round(pointsMetaux + pointsEnergie)
+                # print(self.joueurs[joueur].nbrPoints)
 
     def creer_troudevers(self, n):
         bordure = 10

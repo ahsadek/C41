@@ -212,11 +212,15 @@ class Vue():
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
-        self.btn_ConstruireBatiment = Button(self.cadreinfochoix, text="Batiment")
+        # self.btn_ConstruireBatiment = Button(self.cadreinfochoix, text="Batiment")
+        self.btn_ConstruireMineMetaux = Button(self.cadreinfochoix, text="Mine Metaux")
+        self.btn_ConstruireCentraleElectrique = Button(self.cadreinfochoix, text="Central Electrique")
 
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
-        self.btn_ConstruireBatiment.pack()
+        # self.btn_ConstruireBatiment.pack()
+        self.btn_ConstruireMineMetaux.pack()
+        self.btn_ConstruireCentraleElectrique.pack()
         # self.btncreercombat = Button(self.cadreinfochoix, text="Combat")
         # self.btncreercombat.bind("<Button>", self.creer_vaisseau)
         # self.btncreerexplo = Button(self.cadreinfochoix, text="Explo")
@@ -281,9 +285,9 @@ class Vue():
             else:
                 i += 1
         if self.modele.joueurs[self.mon_nom].etoilemere.id == id:
-            self.champ_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].etoilemere.ressources["metal"])))
-            self.champ_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].etoilemere.ressources["energie"])))
-            self.champ_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].etoilemere.ressources["population"])))
+            self.champ_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].nbrMetal)))
+            self.champ_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].nbrEnergie)))
+            self.champ_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)))
         else:
             self.champ_metal.config(text=("Metal : " + str(self.modele.etoiles[i].ressources["metal"])))
             self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])))
@@ -305,7 +309,22 @@ class Vue():
         self.btn_coloniser.pack_forget()
         self.deplacer_flotte(t)
 
-    def construireBatiment(self, evt, id, t):
+    # def construireBatiment(self, evt, id, t):
+    #     i = 0
+    #     for etoile in self.modele.etoiles:
+    #         if etoile.id == id:
+    #             break
+    #         else:
+    #             i + 1
+    #
+    #     if self.modele.joueurs[self.mon_nom].nbrMetal < 500 or self.modele.joueurs[self.mon_nom].nbrEnergie < 900:
+    #         print("Pas assez de ressources pour construire un batiment")
+    #     else:
+    #         self.modele.joueurs[self.mon_nom].nbrPoints += 5
+    #         self.modele.joueurs[self.mon_nom].nbrMetal -= 500
+    #         self.modele.joueurs[self.mon_nom].nbrEnergie -= 900
+
+    def construireMineMetaux(self, evt, id, t):
         i = 0
         for etoile in self.modele.etoiles:
             if etoile.id == id:
@@ -313,12 +332,37 @@ class Vue():
             else:
                 i + 1
 
-        if self.modele.joueurs[self.mon_nom].nbrMetal < 500 and self.modele.joueurs[self.mon_nom].nbrEnergie < 900:
+        if self.modele.joueurs[self.mon_nom].nbrMetal < 500 or self.modele.joueurs[self.mon_nom].nbrEnergie < 1000:
             print("Pas assez de ressources pour construire un batiment")
         else:
             self.modele.joueurs[self.mon_nom].nbrPoints += 5
             self.modele.joueurs[self.mon_nom].nbrMetal -= 500
-            self.modele.joueurs[self.mon_nom].nbrEnergie -= 900
+            self.modele.joueurs[self.mon_nom].nbrEnergie -= 1000
+            for etoile in self.modele.etoiles:
+                if etoile.id == id:
+                    etoile.batiments["mines_metaux"].quantite += 1
+                    print(etoile.batiments["mines_metaux"].quantite)
+
+
+    def construireCentraleElectrique(self, evt, id, t):
+        i = 0
+        for etoile in self.modele.etoiles:
+            if etoile.id == id:
+                break
+            else:
+                i + 1
+
+        if self.modele.joueurs[self.mon_nom].nbrMetal < 1000 or self.modele.joueurs[self.mon_nom].nbrEnergie < 500:
+            print("Pas assez de ressources pour construire un batiment")
+        else:
+            self.modele.joueurs[self.mon_nom].nbrPoints += 5
+            self.modele.joueurs[self.mon_nom].nbrMetal -= 1000
+            self.modele.joueurs[self.mon_nom].nbrEnergie -= 500
+            for etoile in self.modele.etoiles:
+                if etoile.id == id:
+                    etoile.batiments["centrales_electriques"].quantite += 1
+                    print(etoile.batiments["centrales_electriques"].quantite)
+
 
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
@@ -682,7 +726,10 @@ class Vue():
         if self.ma_selection != None:
             if len(t) != 0:
                 if t[0] == self.mon_nom and t[2] == "Etoile":
-                    self.btn_ConstruireBatiment.config(command=lambda: self.construireBatiment(evt, t[1], t))
+                    # self.btn_ConstruireBatiment.config(command=lambda: self.construireBatiment(evt, t[1], t))
+                    self.btn_ConstruireMineMetaux.config(command=lambda: self.construireMineMetaux(evt, t[1], t))
+                    self.btn_ConstruireCentraleElectrique.config(command=lambda: self.construireCentraleElectrique(evt, t[1], t))
+
 
         if self.ma_selection != None:
             if len(t) != 0:
