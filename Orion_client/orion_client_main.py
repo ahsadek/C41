@@ -238,6 +238,9 @@ class Controleur():
     def creer_laser(self, id_vaisseau_parent, id_cible, proprietaire_cible,type_cible):
         self.actionsrequises.append([self.mon_nom, "creerlaser", [id_vaisseau_parent, id_cible, proprietaire_cible, type_cible]])
         
+    def afficher_ressources(self, id):
+        self.vue.afficher_ressources(id)
+        
     #timer
     def update_timer(self):
         if self.modele.secondes > 0:

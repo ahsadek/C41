@@ -277,7 +277,12 @@ class Vue():
         couleur = self.modele.joueurs[self.mon_nom].couleur
         return couleur
         
-    def afficher_ressources(self, evt, id, t):
+    def deplacer_vaisseau(self, evt, id, t):
+        self.modele.joueurs[self.mon_nom].coloniser = "Scanner"
+        self.deplacer_flotte(t)
+        self.modele.joueurs[self.mon_nom].id_etoile = id
+
+    def afficher_ressources(self, id):
         i = 0
         for etoile in self.modele.etoiles:
             if etoile.id == id:
@@ -295,9 +300,9 @@ class Vue():
             self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])))
             self.champ_population.config(text=("Population : " + str(self.modele.etoiles[i].ressources["population"])))
         self.cadre_info_etoile.pack()
-        self.deplacer_flotte(t)
 
     def coloniser(self, evt, id, t):
+        self.modele.joueurs[self.mon_nom].coloniser = "Coloniser"
         self.modele.joueurs[self.mon_nom].nbrPoints += 15
         i = 0
         for etoile in self.modele.etoiles:
@@ -694,11 +699,11 @@ class Vue():
         if self.ma_selection != None:
             if len(t) != 0:
                 if t[0] == self.mon_nom and t[2] == "Etoile" and len(self.modele.joueurs[self.mon_nom].etoilescontrolees) > 1:
-                    self.afficher_ressources(evt, t[1], t)
+                    self.afficher_ressources(t[1])
 
         if t:  # il y a des tags
             if t[0] == "" and t[2] == "Etoile":
-                self.btn_scanner.config(command=lambda: self.afficher_ressources(evt, t[1], t))
+                self.btn_scanner.config(command=lambda: self.deplacer_vaisseau(evt, t[1], t))
                 self.btn_coloniser.config(command=lambda: self.coloniser(evt, t[1], t))
                 self.montrer_actions_etoile()
                 
@@ -714,8 +719,9 @@ class Vue():
 
             if self.ma_selection != None:
                 if self.ma_selection[2] == "Vaisseau" or "Cargo":
-                    if t[2] == "Porte_de_ver":
-                        self.deplacer_flotte(t)
+                    if len(t) >= 2:
+                        if t[2] == "Porte_de_ver":
+                            self.deplacer_flotte(t)
                 if self.ma_selection[2] == "Vaisseau":
                     self.btn_coloniser.pack_forget()
                     self.btn_attaquer.pack_forget()

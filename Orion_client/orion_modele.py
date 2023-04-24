@@ -292,7 +292,9 @@ class Joueur():
         self.etoilemere.proprietaire = self.nom
         self.couleur = couleur
         self.log = []
+        self.coloniser = None
         self.etoilescontrolees = [etoilemere]
+        self.id_etoile = None
         self.flotte = {"Vaisseau": {},
                        "Cargo": {}}
         self.actions = {"creervaisseau": self.creervaisseau,
@@ -406,10 +408,15 @@ class Joueur():
                         # NOTE  est-ce qu'on doit retirer l'etoile de la liste du modele
                         #       quand on l'attribue aux etoilescontrolees
                         #       et que ce passe-t-il si l'etoile a un proprietaire ???
-                        self.etoilescontrolees.append(rep[1])
-                        self.parent.parent.afficher_etoile(self.nom, rep[1])
+                        if self.coloniser == "Coloniser":
+                            self.etoilescontrolees.append(rep[1])
+                            self.parent.parent.afficher_etoile(self.nom, rep[1])
                         #########################################################################################################################################################
-                        print("arrivé") #########################################################################################################################################
+                        for etoile in self.etoilescontrolees:
+                            if etoile.id == self.id_etoile or self.id_etoile == rep[1].id:
+                                self.parent.parent.afficher_ressources(self.id_etoile)
+                        #########################################################################################################################################################
+                        
                         #########################################################################################################################################################
                     elif rep[0] == "Porte_de_ver":
                         pass                        
