@@ -6,6 +6,7 @@ import ast
 from id import *
 from helper import Helper as hlp
 from threading import Timer
+from math import hypot
 
 
 class Mine_metaux():
@@ -132,12 +133,15 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
         self.espace_cargo = 0
         self.hp = 100
         self.delai_tir = 100        #delai en ms entre les tirs de lasers du vaisseau
+        self.portee = 500
         self.en_tir = False
         self.taille = 5
         self.vitesse = 10
         self.cible = 0
         self.type_cible = None
         self.angle_cible = 0
+        self.angle_cible_tir = 0
+        self.cible_tir = None
         self.arriver = {"Etoile": self.arriver_etoile,
                         "Porte_de_vers": self.arriver_porte,
                         "Espace": self.arriver_espace}
@@ -192,12 +196,29 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
             y = self.cible.y
             self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
-            if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
+            distance = hypot(self.cible.x - self.x, self.cible.y - self.y)
+            #continuer, ne pas re appele la methode avancer
+            if self.firing and distance <= self.portee * 0.80:
+                self.tirer_laser(self.cible, self.cible.__class__.__name__)
+            elif hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
                 self.x = x
                 self.y = y
                 type_obj = type(self.cible).__name__
                 rep = self.arriver[type_obj]()
                 return rep
+        
+        
+    def avancer_combat(self):
+        if self.cible_tir != None:
+            x = self.cible_tir.x
+            y = self.cible_tir.y
+            self.angle_cible_tir = hlp.calcAngle(self.x, self.y, x, y)
+            self.x, self.y = hlp.getAngledPoint(self.angle_cible_tir, self.vitesse, self.x, self.y)
+            distance = hypot(self.cible_tir.x - self.x, self.cible_tir.y - self.y)
+            if self.firing and distance >= self.portee * 0.80:
+                next = Timer(0.075, self.tirer_laser, args=(self.cible_tir, self.cible_tir.__class__.__name__))
+                next.start()
+            
 
     def arriver_etoile(self):
         self.parent.log.append(
@@ -229,10 +250,15 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
         return ["Porte_de_ver", cible]
     
     def tirer_laser(self, cible, type_cible):
-        self.liste_laser.append(Laser(self, self.proprietaire, self.x, self.y, cible, type_cible))
+        self.cible_tir = cible
+        distance = hypot(cible.x - self.x, cible.y - self.y)
         if (self.firing == True):
-            tir = Timer(0.25, self.tirer_laser, args=(cible, type_cible))
-            tir.start()
+            if (self.portee >= distance):
+                self.liste_laser.append(Laser(self, self.proprietaire, self.x, self.y, cible, type_cible))
+                tir = Timer(0.25, self.tirer_laser, args=(cible, type_cible))
+                tir.start()
+            else:
+                self.avancer_combat()
 
 
 class Cargo(Vaisseau):
@@ -275,7 +301,8 @@ class Laser(Vaisseau):
         self.cible = cible
         self.type_cible = type_cible
         self.arriver = {"Etoile": self.arriver_etoile,
-                        "Vaisseau": self.arriver_vaisseau}
+                        "Vaisseau": self.arriver_vaisseau,
+                        "Cargo": self.arriver_vaisseau}
 
 
     def arriver_etoile(self):
