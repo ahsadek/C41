@@ -140,6 +140,8 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
         self.cible = 0
         self.type_cible = None
         self.angle_cible = 0
+        self.angle_cible_tir = 0
+        self.cible_tir = None
         self.arriver = {"Etoile": self.arriver_etoile,
                         "Porte_de_vers": self.arriver_porte,
                         "Espace": self.arriver_espace}
@@ -204,6 +206,19 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
                 type_obj = type(self.cible).__name__
                 rep = self.arriver[type_obj]()
                 return rep
+        
+        
+    def avancer_combat(self):
+        if self.cible_tir != None:
+            x = self.cible_tir.x
+            y = self.cible_tir.y
+            self.angle_cible_tir = hlp.calcAngle(self.x, self.y, x, y)
+            self.x, self.y = hlp.getAngledPoint(self.angle_cible_tir, self.vitesse, self.x, self.y)
+            distance = hypot(self.cible_tir.x - self.x, self.cible_tir.y - self.y)
+            if self.firing and distance >= self.portee * 0.80:
+                next = Timer(0.075, self.tirer_laser, args=(self.cible_tir, self.cible_tir.__class__.__name__))
+                next.start()
+            
 
     def arriver_etoile(self):
         self.parent.log.append(
@@ -235,17 +250,15 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
         return ["Porte_de_ver", cible]
     
     def tirer_laser(self, cible, type_cible):
-        self.cible = cible
+        self.cible_tir = cible
         distance = hypot(cible.x - self.x, cible.y - self.y)
-        print(distance)
         if (self.firing == True):
             if (self.portee >= distance):
                 self.liste_laser.append(Laser(self, self.proprietaire, self.x, self.y, cible, type_cible))
                 tir = Timer(0.25, self.tirer_laser, args=(cible, type_cible))
                 tir.start()
             else:
-                print("avancer")
-                self.avancer()
+                self.avancer_combat()
 
 
 class Cargo(Vaisseau):
