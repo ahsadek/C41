@@ -553,7 +553,8 @@ class Vue():
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
-        self.parent.creer_vaisseau(type_vaisseau)
+        print(self.ma_selection[1])
+        self.parent.creer_vaisseau(type_vaisseau, self.ma_selection[1])
         self.ma_selection = None
         self.canevas.delete("marqueur")
         self.cadreinfochoix.pack_forget()
@@ -727,6 +728,7 @@ class Vue():
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
                 if t[2] == "Etoile":
+                    self.modele.joueurs[t[0]].etoileselect = t[1]
                     self.montrer_etoile_selection()
                 elif t[2] == "Cargo" or t[2] == "Vaisseau":
                     self.montrer_flotte_selection()

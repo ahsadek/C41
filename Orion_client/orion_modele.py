@@ -294,6 +294,7 @@ class Joueur():
         self.parent = parent
         self.nom = nom
         self.etoilemere = etoilemere
+        self.etoileselect = None
         self.etoilemere.proprietaire = self.nom
         self.couleur = couleur
         self.log = []
@@ -318,11 +319,24 @@ class Joueur():
         }
         
     def creervaisseau(self, params):
+        print(params)
         type_vaisseau = params[0]
-        if type_vaisseau == "Cargo":
-            v = Cargo(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+        id_etoilecourante = params[1]
+        etoilecourante = None
+
+        if id_etoilecourante == self.etoilemere.id:
+            etoilecourante = self.etoilemere
         else:
-            v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+            for etoile in self.parent.etoiles:
+                if etoile.id == id_etoilecourante:
+                    etoilecourante = etoile
+                    break
+
+
+        if type_vaisseau == "Cargo":
+            v = Cargo(self, self.nom,  etoilecourante.x + 10, etoilecourante.y)  #            v = Cargo(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+        else:
+            v = Vaisseau(self, self.nom, etoilecourante.x + 10, etoilecourante.y) # v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
         self.flotte[type_vaisseau][v.id] = v
 
         if self.nom == self.parent.parent.mon_nom:
@@ -434,7 +448,7 @@ class IA(Joueur):
         self.avancer_flotte(1)
 
         if self.cooldown == 0:
-            v = self.creervaisseau(["Vaisseau"])
+            v = self.creervaisseau(["Vaisseau", self.etoilemere.id])
             cible = random.choice(self.parent.etoiles)
             v.acquerir_cible(cible, "Etoile")
             self.cooldown = random.randrange(self.cooldownmax) + self.cooldownmax
