@@ -810,3 +810,13 @@ class Vue():
             self.canevas.delete("selecteur")
 
     ### FIN du multiselect
+
+    def creercadre_fin_jeu(self, gagnant):
+        self.cadre_fin_jeu = Frame(self.cadre_app)
+        self.label_gagnant = Label(self.cadre_fin_jeu, text="Le gagnant est: " + gagnant)
+        self.boutonRetour = Button(self.cadre_fin_jeu, text="Retour au lobby", command=self.changer_cadre("splash"))
+        self.cadre_fin_jeu.config(bg="black", width=500, height=500)
+        self.cadre_fin_jeu.pack()
+        self.label_gagnant.pack()
+        self.boutonRetour.pack()
+        return self.cadre_fin_jeu
