@@ -468,11 +468,12 @@ class Modele():
 
     def production_pointage(self):
         for joueur in self.joueurs:
+            # if joueur == self.joueurs:
             for etoile in self.joueurs[joueur].etoilescontrolees:
-                pointsMetaux = self.joueurs[joueur].nbrMetal * 0.005
-                pointsEnergie = self.joueurs[joueur].nbrEnergie * 0.005
+                pointsMetaux = self.joueurs[joueur].nbrMetal * 0.001
+                pointsEnergie = self.joueurs[joueur].nbrEnergie * 0.001
                 self.joueurs[joueur].nbrPoints += round(pointsMetaux + pointsEnergie)
-                # print(self.joueurs[joueur].nbrPoints)
+                print(str(self.joueurs[joueur].nbrPoints) + " " + str(self.joueurs[joueur].id))
 
     def creer_troudevers(self, n):
         bordure = 10
