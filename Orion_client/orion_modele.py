@@ -462,6 +462,7 @@ class Modele():
         self.creer_troudevers(nb_trou)
         self.minutes = selected_timer
         self.secondes = 00
+        self.debutJeu = 0
 
     def production_ressource(self):
         for joueur in self.joueurs:
@@ -516,6 +517,9 @@ class Modele():
 
     ##############################################################################
     def jouer_prochain_coup(self, cadre):
+        joueur_sans_etoile = 0
+        joueur_avec_etoile = 0
+        
         #  NE PAS TOUCHER LES LIGNES SUIVANTES  ################
         self.cadre_courant = cadre
         # insertion de la prochaine action demandée par le joueur
@@ -529,6 +533,19 @@ class Modele():
             del self.actions_a_faire[cadre]
         # FIN DE L'INTERDICTION #################################
 
+        #### Debut Eric
+        if self.debutJeu != 0:
+            for joueur in self.joueurs:
+                for etoile in self.joueurs[joueur].etoilescontrolees:
+                    if etoile == 0:
+                        joueur_sans_etoile += 1
+                    elif etoile >= 5:
+                        joueur_avec_etoile += 1
+            
+            if joueur_avec_etoile == 1:
+                print("Un seul gagnant")
+        #### Fin Eric
+        
         # demander aux objets de jouer leur prochain coup
         # aux joueurs en premier
         for i in self.joueurs:

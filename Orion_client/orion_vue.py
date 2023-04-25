@@ -38,7 +38,7 @@ class Vue():
         # self.root.protocol("WM_DELETE_WINDOW", self.demander_abandon)
         
         # affichage/images
-        dossier_images = os.path.join(os.path.curdir, 'images')
+        dossier_images = os.path.join(os.path.curdir, 'Orion_client/images')
         print("curent dir" +os.getcwd())
 
         self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
