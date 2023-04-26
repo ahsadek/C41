@@ -538,7 +538,7 @@ class Modele():
         for joueur in self.joueurs:
             if len(self.joueurs[joueur].etoilescontrolees) == 0:
                 joueur_sans_etoile += 1
-            elif len(self.joueurs[joueur].etoilescontrolees) == 2:
+            else:
                 joueur_gagnant = joueur
                 joueur_avec_etoile += 1
             
