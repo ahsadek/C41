@@ -516,17 +516,34 @@ class Modele():
         
         
     def update_timer(self):
-        if self.secondes > 0:
-            self.secondes -= 1
+        if self.minutes == 0 and self.secondes == 0:
+            joueur_gagnant = self.select_joueur_gagnant()
+            self.parent.afficher_fin_jeu(joueur_gagnant)
+            pass
         else:
-            self.minutes -= 1
-            self.secondes = 59
+            if self.secondes > 0:
+                self.secondes -= 1
+            else:
+                self.minutes -= 1
+                self.secondes = 59
 
-        self.boucle_timer = Timer(1.0, self.update_timer)
-        self.parent.update_timer_vue()
-        self.boucle_timer.start()   
-        
-
+            self.boucle_timer = Timer(1.0, self.update_timer)
+            self.parent.update_timer_vue()
+            self.boucle_timer.start()   
+            
+            
+    def select_joueur_gagnant(self):
+        joueur_gagnant = None
+        for joueur in self.joueurs:
+            # if len(self.joueurs[joueur].etoilescontrolees) == 0:
+            if joueur_gagnant == None:
+                joueur_gagnant = self.joueurs[joueur]
+            else:
+                if self.joueurs[joueur].nbrPoints > joueur_gagnant:
+                    joueur_gagnant = self.joueurs[joueur]          
+        return joueur_gagnant
+    
+    
     def production_ressource(self):
         for joueur in self.joueurs:
             for etoile in self.joueurs[joueur].etoilescontrolees:
