@@ -191,6 +191,8 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
         self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
 
     def avancer(self):
+        if self.firing:
+            self.firing = False
         if self.cible != 0:
             x = self.cible.x
             y = self.cible.y
@@ -252,7 +254,7 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
     def tirer_laser(self, cible, type_cible):
         self.cible_tir = cible
         distance = hypot(cible.x - self.x, cible.y - self.y)
-        if (self.firing == True):
+        if self.firing == True and cible.proprietaire != self.proprietaire:
             if (self.portee >= distance):
                 self.liste_laser.append(Laser(self, self.proprietaire, self.x, self.y, cible, type_cible))
                 tir = Timer(0.25, self.tirer_laser, args=(cible, type_cible))
@@ -431,8 +433,6 @@ class Joueur():
 
     def ciblerFlotteEspace(self, params):
         idOrigine, posDestinationX, posDestinationY, typeCible, type_origine = params
-        if type_origine == "Vaisseau":
-            self.parent.joueurs[self.nom].flotte["Vaisseau"][idOrigine].firing = False
         ori = None
         for i in self.flotte.keys():
             if idOrigine in self.flotte[i]:
@@ -587,6 +587,8 @@ class Modele():
             else:
                 joueur_gagnant = joueur
                 joueur_avec_etoile += 1
+            
+        print(joueur_avec_etoile)
             
         if joueur_avec_etoile == 1:
             print("Partie finiiiiiiiiiiiiiiiiiieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")

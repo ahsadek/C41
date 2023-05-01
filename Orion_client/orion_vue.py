@@ -720,7 +720,7 @@ class Vue():
 
             if self.ma_selection != None:
                 if self.ma_selection[2] == "Vaisseau" or "Cargo":
-                    if len(t) >= 2:
+                    if len(t) >= 3:
                         if t[2] == "Porte_de_ver":
                             self.deplacer_flotte(t)
                 if self.ma_selection[2] == "Vaisseau":
