@@ -335,7 +335,9 @@ class Joueur():
         self.actions = {"creervaisseau": self.creervaisseau,
                         "ciblerflotte": self.ciblerflotte,
                         "ciblerflotteespace": self.ciblerFlotteEspace,
-                        "creerlaser": self.creerlaser}
+                        "creerlaser": self.creerlaser,
+                        "update_points": self.update_points,
+                        "update_coloniser": self.update_coloniser}
 
         self.nbrPoints = 0
         self.nbrMetal = random.randrange(500, 1000)
@@ -349,6 +351,17 @@ class Joueur():
             "laboratoires_recherche": [],
             "systemes_defense": []
         }
+        
+        
+    def update_points(self, params):
+        joueur, points = params
+        self.parent.joueurs[joueur].nbrPoints += points
+    
+    
+    def update_coloniser(self, params):
+        joueur, action = params
+        self.parent.joueurs[joueur].coloniser = action
+        
         
     def creervaisseau(self, params):
         type_vaisseau = params[0]
@@ -378,6 +391,7 @@ class Joueur():
     def creerlaser(self, params):
         id_parent, id_cible, proprietaire_cible, type_cible = params
         
+        
         vaisseau_parent = self.parent.joueurs[self.nom].flotte["Vaisseau"][id_parent]
         if type_cible == "Etoile":
             for etoile in self.parent.etoiles:
@@ -390,7 +404,8 @@ class Joueur():
                         cible = etoile
                         break
         else:
-            cible = self.parent.joueurs[proprietaire_cible].flotte[type_cible][id_cible]
+            if self.parent.joueurs[proprietaire_cible].flotte[type_cible][id_cible] != None:
+                cible = self.parent.joueurs[proprietaire_cible].flotte[type_cible][id_cible]
         
         vaisseau_parent.firing = True
         vaisseau_parent.tirer_laser(cible, type_cible)
@@ -455,6 +470,7 @@ class Joueur():
                         #       quand on l'attribue aux etoilescontrolees
                         #       et que ce passe-t-il si l'etoile a un proprietaire ???
                         if self.coloniser == "Coloniser":
+                            print("test")
                             self.etoilescontrolees.append(rep[1])
                             self.parent.parent.afficher_etoile(self.nom, rep[1])
                         #########################################################################################################################################################
@@ -559,7 +575,6 @@ class Modele():
                 pointsMetaux = self.joueurs[joueur].nbrMetal * 0.001
                 pointsEnergie = self.joueurs[joueur].nbrEnergie * 0.001
                 self.joueurs[joueur].nbrPoints += round(pointsMetaux + pointsEnergie)
-                print(str(self.joueurs[joueur].nbrPoints) + " " + str(self.joueurs[joueur].id))
 
     def creer_troudevers(self, n):
         bordure = 10

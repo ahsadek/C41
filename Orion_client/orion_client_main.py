@@ -236,6 +236,15 @@ class Controleur():
         self.vue.cadres["fin_jeu"] = self.vue.creercadre_fin_jeu(gagnant)
         self.vue.changer_cadre("fin_jeu")
         
+    
+    def update_joueur_coloniser(self, joueur, action):
+        self.actionsrequises.append([self.mon_nom, "update_coloniser", [joueur, action]])
+        
+        
+    def ajouter_points(self, joueur, points):
+        self.actionsrequises.append([self.mon_nom, "update_points", [joueur, points]])
+    
+    
     def lancer_timer(self, nb_minutes):
         self.modele.lancer_timer(nb_minutes)
         

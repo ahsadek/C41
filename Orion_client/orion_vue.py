@@ -142,7 +142,6 @@ class Vue():
     
     def update_timer(self, event):
         self.minutes = int(self.options_temps.get())
-        print(self.minutes)
 
     def creer_cadre_partie(self):
         self.cadrepartie = Frame(self.cadre_app, width=600, height=200, bg="yellow")
@@ -282,7 +281,7 @@ class Vue():
         return couleur
         
     def deplacer_vaisseau(self, evt, id, t):
-        self.modele.joueurs[self.mon_nom].coloniser = "Scanner"
+        self.parent.update_joueur_coloniser(self.mon_nom, "Scanner")
         self.deplacer_flotte(t)
         self.modele.joueurs[self.mon_nom].id_etoile = id
 
@@ -305,8 +304,8 @@ class Vue():
         self.cadre_info_etoile.pack()
 
     def coloniser(self, evt, id, t):
-        self.modele.joueurs[self.mon_nom].coloniser = "Coloniser"
-        self.modele.joueurs[self.mon_nom].nbrPoints += 15
+        self.parent.update_joueur_coloniser(self.mon_nom, "Coloniser")
+        self.parent.ajouter_points(self.mon_nom, 15)
         i = 0
         for etoile in self.modele.etoiles:
             if etoile.id == id:
@@ -345,7 +344,7 @@ class Vue():
         if self.modele.joueurs[self.mon_nom].nbrMetal < 500 or self.modele.joueurs[self.mon_nom].nbrEnergie < 1000:
             print("Pas assez de ressources pour construire un batiment")
         else:
-            self.modele.joueurs[self.mon_nom].nbrPoints += 5
+            self.parent.ajouter_points(self.mon_nom, 5)
             self.modele.joueurs[self.mon_nom].nbrMetal -= 500
             self.modele.joueurs[self.mon_nom].nbrEnergie -= 1000
             for etoile in self.modele.etoiles:
@@ -365,7 +364,7 @@ class Vue():
         if self.modele.joueurs[self.mon_nom].nbrMetal < 1000 or self.modele.joueurs[self.mon_nom].nbrEnergie < 500:
             print("Pas assez de ressources pour construire un batiment")
         else:
-            self.modele.joueurs[self.mon_nom].nbrPoints += 5
+            self.parent.ajouter_points(self.mon_nom, 5)
             self.modele.joueurs[self.mon_nom].nbrMetal -= 1000
             self.modele.joueurs[self.mon_nom].nbrEnergie -= 500
             for etoile in self.modele.etoiles:
@@ -610,7 +609,6 @@ class Vue():
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
-        print(self.ma_selection[1])
         self.parent.creer_vaisseau(type_vaisseau, self.ma_selection[1])
         self.ma_selection = None
         self.canevas.delete("marqueur")
@@ -764,7 +762,6 @@ class Vue():
                         # self.btn_coloniser.config(command=self.forget_button)
                         # self.messageArrivee = Label(self.cadreoutils, text="Étoile colonisée!")
                         # self.cadreoutils.after(2000, self.messageArrivee.pack())
-                        print("cargo")
 
             if self.ma_selection != None:
                 if self.ma_selection[2] == "Vaisseau" or "Cargo":
