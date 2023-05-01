@@ -8,7 +8,6 @@ import json
 import urllib.error
 import urllib.parse
 import urllib.request
-from threading import Timer
 
 from orion_modele import *
 from orion_vue import *
@@ -92,7 +91,7 @@ class Controleur():
             listejoueurs.append(i[0])
 
         self.modele = Modele(self,
-                             listejoueurs, self.vue.minutes)  # on cree une partie pour les joueurs listes, qu'on conserve comme modele
+                             listejoueurs)  # on cree une partie pour les joueurs listes, qu'on conserve comme modele
         self.vue.initialiser_avec_modele(self.modele)  # on fournit le modele et mets la vue à jour
         self.vue.changer_cadre("partie")  # on change le cadre la fenetre pour passer dans l'interface de jeu
 
@@ -146,16 +145,6 @@ class Controleur():
                 print("ERREUR ", self.cadrejeu, e)
                 self.onjoue = 0
 
-        #timer
-        if self.cadrejeu == 1:
-            self.update_timer()
-
-        if self.vue.minutes != self.modele.minutes:
-            self.vue.minutes = self.modele.minutes
-            self.vue.update_cadre_timer()
-        if self.vue.secondes != self.modele.secondes:
-            self.vue.update_cadre_timer()
-            self.vue.secondes = self.modele.secondes
         
         # le reste du tour vers modele et vers vue, s'il y a lieu
         if self.onjoue and self.modele.jeu_actif:
@@ -245,18 +234,14 @@ class Controleur():
         self.vue.cadres["fin_jeu"] = self.vue.creercadre_fin_jeu(gagnant)
         self.vue.changer_cadre("fin_jeu")
         
-    #timer
-    def update_timer(self):
-        if self.modele.secondes > 0:
-            self.modele.secondes -= 1
-        else:
-            self.modele.minutes -= 1
-            self.modele.secondes = 59
-
-        self.boucle_timer = Timer(1.0, self.update_timer)
-        self.boucle_timer.start()    
-
-
+    def lancer_timer(self, nb_minutes):
+        self.modele.lancer_timer(nb_minutes)
+        
+        
+    def update_timer_vue(self):
+        self.vue.update_cadre_timer()
+ 
+ 
 if __name__ == "__main__":
     c = Controleur()
     print("End Orion_mini")

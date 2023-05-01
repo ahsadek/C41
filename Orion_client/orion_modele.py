@@ -350,7 +350,6 @@ class Joueur():
         }
         
     def creervaisseau(self, params):
-        print(params)
         type_vaisseau = params[0]
         id_etoilecourante = params[1]
         etoilecourante = None
@@ -493,7 +492,7 @@ class IA(Joueur):
             self.cooldown -= 1
 
 class Modele():
-    def __init__(self, parent, joueurs, selected_timer):
+    def __init__(self, parent, joueurs):
         self.parent = parent
         self.largeur = 9000
         self.hauteur = 9000
@@ -506,9 +505,27 @@ class Modele():
         self.creeretoiles(joueurs, 1)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
-        self.minutes = selected_timer
+        self.minutes = 00
         self.secondes = 00
         self.jeu_actif = True
+        
+        
+    def lancer_timer(self, nb_minutes):
+        self.minutes = nb_minutes
+        self.update_timer()
+        
+        
+    def update_timer(self):
+        if self.secondes > 0:
+            self.secondes -= 1
+        else:
+            self.minutes -= 1
+            self.secondes = 59
+
+        self.boucle_timer = Timer(1.0, self.update_timer)
+        self.parent.update_timer_vue()
+        self.boucle_timer.start()   
+        
 
     def production_ressource(self):
         for joueur in self.joueurs:
@@ -587,8 +604,6 @@ class Modele():
             else:
                 joueur_gagnant = joueur
                 joueur_avec_etoile += 1
-            
-        print(joueur_avec_etoile)
             
         if joueur_avec_etoile == 1:
             print("Partie finiiiiiiiiiiiiiiiiiieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")

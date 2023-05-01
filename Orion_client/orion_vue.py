@@ -191,7 +191,7 @@ class Vue():
         return self.cadrepartie
     
     def update_cadre_timer(self):
-        self.cadre_timer.config(text=(str(self.minutes) + ":" + str(self.secondes)))
+        self.cadre_timer.config(text=(str(self.modele.minutes) + ":" + str(self.modele.secondes)))
 
     def creer_cadre_outils(self):
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")
@@ -407,10 +407,12 @@ class Vue():
 
     def lancer_partie(self):
         self.parent.lancer_partie()
+        
 
     def initialiser_avec_modele(self, modele):
         self.mon_nom = self.parent.mon_nom
         self.modele = modele
+        self.parent.lancer_timer(self.minutes)
         self.canevas.config(scrollregion=(0, 0, modele.largeur, modele.hauteur))
 
         self.labid.config(text=self.mon_nom)
