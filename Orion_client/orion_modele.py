@@ -116,6 +116,13 @@ class Etoile():
             "systemes_defense": Systeme_defense(self.id)
         }
 
+class Artefact(Etoile):
+    def __init__(self, parent, x, y):
+        super().__init__(parent, x, y)
+        self.id = get_prochain_id()
+        self.proprietaire = ""
+        self.taille = random.randrange(4, 8)
+
 class Espace():
     def __init__(self, x, y):
         self.id = get_prochain_id()
