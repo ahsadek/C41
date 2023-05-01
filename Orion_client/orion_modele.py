@@ -473,7 +473,6 @@ class Modele():
                 pointsMetaux = self.joueurs[joueur].nbrMetal * 0.001
                 pointsEnergie = self.joueurs[joueur].nbrEnergie * 0.001
                 self.joueurs[joueur].nbrPoints += round(pointsMetaux + pointsEnergie)
-                print(str(self.joueurs[joueur].nbrPoints) + " " + str(self.joueurs[joueur].id))
 
     def creer_troudevers(self, n):
         bordure = 10
