@@ -556,7 +556,7 @@ class Modele():
             if joueur_gagnant == None:
                 joueur_gagnant = self.joueurs[joueur]
             else:
-                if self.joueurs[joueur].nbrPoints > joueur_gagnant:
+                if self.joueurs[joueur].nbrPoints > joueur_gagnant.nbrPoints:
                     joueur_gagnant = self.joueurs[joueur]          
         return joueur_gagnant
     
