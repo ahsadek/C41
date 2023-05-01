@@ -178,10 +178,12 @@ class Vue():
         self.creer_cadre_outils()
 
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
+        self.label_ressources = Label(self.cadreoutils, text="Ressources :")
         self.label_points = Label(self.cadreoutils, text="Points : " + str(0))
         self.label_metal = Label(self.cadreoutils, text="Métal : " + str(0))
         self.label_energie = Label(self.cadreoutils, text="Énergie : " + str(0))
         self.label_population = Label(self.cadreoutils, text="Population : " + str(0))
+        self.label_ressources.pack(side=TOP)
         self.label_points.pack(side=TOP)
         self.label_metal.pack(side=TOP)
         self.label_energie.pack(side=TOP)
@@ -254,9 +256,11 @@ class Vue():
 
         # cadre info etoile
         self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
+        self.champ_info = Label(self.cadre_info_etoile)
         self.champ_metal = Label(self.cadre_info_etoile)
         self.champ_energie = Label(self.cadre_info_etoile)
         self.champ_population = Label(self.cadre_info_etoile)
+        self.champ_info.pack()
         self.champ_metal.pack()
         self.champ_energie.pack()
         self.champ_population.pack()
@@ -273,7 +277,12 @@ class Vue():
         couleur = self.modele.joueurs[self.mon_nom].couleur
         return couleur
         
-    def afficher_ressources(self, evt, id, t):
+    def deplacer_vaisseau(self, evt, id, t):
+        self.modele.joueurs[self.mon_nom].coloniser = "Scanner"
+        self.deplacer_flotte(t)
+        self.modele.joueurs[self.mon_nom].id_etoile = id
+
+    def afficher_ressources(self, id):
         i = 0
         for etoile in self.modele.etoiles:
             if etoile.id == id:
@@ -281,17 +290,19 @@ class Vue():
             else:
                 i += 1
         if self.modele.joueurs[self.mon_nom].etoilemere.id == id:
+            self.champ_info.config(text="Informations :")
             self.champ_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].etoilemere.ressources["metal"])))
             self.champ_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].etoilemere.ressources["energie"])))
             self.champ_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].etoilemere.ressources["population"])))
         else:
+            self.champ_info.config(text="Informations :")
             self.champ_metal.config(text=("Metal : " + str(self.modele.etoiles[i].ressources["metal"])))
             self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])))
             self.champ_population.config(text=("Population : " + str(self.modele.etoiles[i].ressources["population"])))
         self.cadre_info_etoile.pack()
-        self.deplacer_flotte(t)
 
     def coloniser(self, evt, id, t):
+        self.modele.joueurs[self.mon_nom].coloniser = "Coloniser"
         self.modele.joueurs[self.mon_nom].nbrPoints += 15
         i = 0
         for etoile in self.modele.etoiles:
@@ -529,6 +540,7 @@ class Vue():
         metal = self.modele.joueurs[self.mon_nom].nbrMetal
         energie = self.modele.joueurs[self.mon_nom].nbrEnergie
 
+        self.label_ressources.config(fg=self.returnCouleur(), font="Verdana 10 bold")
         self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)), fg=self.returnCouleur(), font="Verdana 10 bold")
         self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
         self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
@@ -688,11 +700,11 @@ class Vue():
         if self.ma_selection != None:
             if len(t) != 0:
                 if t[0] == self.mon_nom and t[2] == "Etoile" and len(self.modele.joueurs[self.mon_nom].etoilescontrolees) > 1:
-                    self.afficher_ressources(evt, t[1], t)
+                    self.afficher_ressources(t[1])
 
         if t:  # il y a des tags
             if t[0] == "" and t[2] == "Etoile":
-                self.btn_scanner.config(command=lambda: self.afficher_ressources(evt, t[1], t))
+                self.btn_scanner.config(command=lambda: self.deplacer_vaisseau(evt, t[1], t))
                 self.btn_coloniser.config(command=lambda: self.coloniser(evt, t[1], t))
                 self.montrer_actions_etoile()
                 
@@ -708,7 +720,11 @@ class Vue():
 
             if self.ma_selection != None:
                 if self.ma_selection[2] == "Vaisseau" or "Cargo":
+<<<<<<< HEAD
                     if len(t) >= 3:
+=======
+                    if len(t) >= 2:
+>>>>>>> Eric
                         if t[2] == "Porte_de_ver":
                             self.deplacer_flotte(t)
                 if self.ma_selection[2] == "Vaisseau":
@@ -800,3 +816,13 @@ class Vue():
             self.canevas.delete("selecteur")
 
     ### FIN du multiselect
+
+    def creercadre_fin_jeu(self, gagnant):
+        self.cadre_fin_jeu = Frame(self.cadre_app)
+        self.label_gagnant = Label(self.cadre_fin_jeu, text="Le gagnant est: " + gagnant)
+        self.boutonRetour = Button(self.cadre_fin_jeu, text="Retour au lobby", command=self.changer_cadre("splash"))
+        self.cadre_fin_jeu.config(bg="black", width=500, height=500)
+        self.cadre_fin_jeu.pack()
+        self.label_gagnant.pack()
+        self.boutonRetour.pack()
+        return self.cadre_fin_jeu

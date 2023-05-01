@@ -158,7 +158,7 @@ class Controleur():
             self.vue.secondes = self.modele.secondes
         
         # le reste du tour vers modele et vers vue, s'il y a lieu
-        if self.onjoue:
+        if self.onjoue and self.modele.jeu_actif:
             # envoyer les messages au modele et a la vue de faire leur job
             self.modele.jouer_prochain_coup(self.cadrejeu)
             self.vue.afficher_jeu()
@@ -237,6 +237,13 @@ class Controleur():
         
     def creer_laser(self, id_vaisseau_parent, id_cible, proprietaire_cible,type_cible):
         self.actionsrequises.append([self.mon_nom, "creerlaser", [id_vaisseau_parent, id_cible, proprietaire_cible, type_cible]])
+        
+    def afficher_ressources(self, id):
+        self.vue.afficher_ressources(id)
+    
+    def afficher_fin_jeu(self, gagnant):
+        self.vue.cadres["fin_jeu"] = self.vue.creercadre_fin_jeu(gagnant)
+        self.vue.changer_cadre("fin_jeu")
         
     #timer
     def update_timer(self):

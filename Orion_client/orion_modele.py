@@ -325,7 +325,9 @@ class Joueur():
         self.etoilemere.proprietaire = self.nom
         self.couleur = couleur
         self.log = []
+        self.coloniser = None
         self.etoilescontrolees = [etoilemere]
+        self.id_etoile = None
         self.flotte = {"Vaisseau": {},
                        "Cargo": {}}
         self.actions = {"creervaisseau": self.creervaisseau,
@@ -452,10 +454,18 @@ class Joueur():
                         # NOTE  est-ce qu'on doit retirer l'etoile de la liste du modele
                         #       quand on l'attribue aux etoilescontrolees
                         #       et que ce passe-t-il si l'etoile a un proprietaire ???
-                        self.etoilescontrolees.append(rep[1])
-                        self.parent.parent.afficher_etoile(self.nom, rep[1])
+                        if self.coloniser == "Coloniser":
+                            self.etoilescontrolees.append(rep[1])
+                            self.parent.parent.afficher_etoile(self.nom, rep[1])
+                        #########################################################################################################################################################
+                        for etoile in self.etoilescontrolees:
+                            if etoile.id == self.id_etoile or self.id_etoile == rep[1].id:
+                                self.parent.parent.afficher_ressources(self.id_etoile)
+                        #########################################################################################################################################################
+                        
+                        #########################################################################################################################################################
                     elif rep[0] == "Porte_de_ver":
-                        pass
+                        pass                        
 
 
 # IA- nouvelle classe de joueur
@@ -498,6 +508,7 @@ class Modele():
         self.creer_troudevers(nb_trou)
         self.minutes = selected_timer
         self.secondes = 00
+        self.jeu_actif = True
 
     def production_ressource(self):
         for joueur in self.joueurs:
@@ -552,6 +563,8 @@ class Modele():
 
     ##############################################################################
     def jouer_prochain_coup(self, cadre):
+        
+        
         #  NE PAS TOUCHER LES LIGNES SUIVANTES  ################
         self.cadre_courant = cadre
         # insertion de la prochaine action demandée par le joueur
@@ -565,6 +578,22 @@ class Modele():
             del self.actions_a_faire[cadre]
         # FIN DE L'INTERDICTION #################################
 
+        #### Debut Eric
+        joueur_sans_etoile = 0
+        joueur_avec_etoile = 0
+        for joueur in self.joueurs:
+            if len(self.joueurs[joueur].etoilescontrolees) == 0:
+                joueur_sans_etoile += 1
+            else:
+                joueur_gagnant = joueur
+                joueur_avec_etoile += 1
+            
+        if joueur_avec_etoile == 1:
+            print("Partie finiiiiiiiiiiiiiiiiiieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+            print("Le joueur " + joueur_gagnant + " a gagné")
+            self.parent.afficher_fin_jeu(joueur_gagnant)
+            self.jeu_actif = False
+        #### Fin Eric
         # demander aux objets de jouer leur prochain coup
         # aux joueurs en premier
         for i in self.joueurs:
