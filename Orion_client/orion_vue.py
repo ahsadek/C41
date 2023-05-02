@@ -208,16 +208,20 @@ class Vue():
         self.btnmini.pack()
 
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
-        self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
+        self.btncreerexplo = Button(self.cadreinfochoix, text="Explo")
+        self.btncreerexplo.bind("<Button>", self.creer_vaisseau)
+        self.btncreercombat = Button(self.cadreinfochoix, text="Combat")
+        self.btncreercombat.bind("<Button>", self.creer_vaisseau)
         # self.btn_ConstruireBatiment = Button(self.cadreinfochoix, text="Batiment")
         self.btn_ConstruireMineMetaux = Button(self.cadreinfochoix, text="Mine Metaux")
         self.btn_ConstruireCentraleElectrique = Button(self.cadreinfochoix, text="Central Electrique")
 
-        self.btncreervaisseau.pack()
+        # self.btncreervaisseau.pack()
         self.btncreercargo.pack()
+        self.btncreerexplo.pack()
+        self.btncreercombat.pack()
         # self.btn_ConstruireBatiment.pack()
         self.btn_ConstruireMineMetaux.pack()
         self.btn_ConstruireCentraleElectrique.pack()
@@ -568,21 +572,24 @@ class Vue():
         id = cible.id
         couleur = joueur1.couleur
         self.canevas.itemconfig(id, fill=couleur)
-        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
+        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile"))
 
-        metal = self.modele.joueurs[self.mon_nom].nbrMetal
-        energie = self.modele.joueurs[self.mon_nom].nbrEnergie
+        # metal = self.modele.joueurs[self.mon_nom].nbrMetal
+        # energie = self.modele.joueurs[self.mon_nom].nbrEnergie
+        #
+        # self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        # self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        # self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        # self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), fg=self.returnCouleur(), font="Verdana 10 bold")
 
-        self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), fg=self.returnCouleur(), font="Verdana 10 bold")
 
     # ajuster la liste des vaisseaux
     def lister_objet(self, joueur):
         self.info_liste.delete(0, END)
         self.refresh_liste_vaisseau(joueur)
        #self.info_liste.insert(END, obj + "; " + id)
+
+
         
         
     def refresh_liste_vaisseau(self, joueur):
@@ -663,6 +670,14 @@ class Vue():
                 self.canevas.create_oval(i.x - i.pulse, i.y - i.pulse,
                                          i.x + i.pulse, i.y + i.pulse, outline=i.couleur, width=2, fill="grey15",
                                          tags=("", i.id, "Porte_de_ver", "objet_spatial"))
+
+        metal = self.modele.joueurs[self.mon_nom].nbrMetal
+        energie = self.modele.joueurs[self.mon_nom].nbrEnergie
+
+        self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), fg=self.returnCouleur(), font="Verdana 10 bold")
 
 
     def dessiner_laser(self, obj, tailleF, joueur, type_obj):

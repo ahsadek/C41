@@ -143,7 +143,6 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
                         "Espace": self.arriver_espace}
         self.liste_laser = []
         self.firing = False
-
     def jouer_prochain_coup(self, trouver_nouveau=0):
         #lasers
         for laser in self.liste_laser:
@@ -244,6 +243,9 @@ class Cargo(Vaisseau):
         self.vitesse = 5
         self.cible = 0
         self.ang = 0
+        self.prixMetal = 9000
+        self.prixEnergie = 8000
+        self.prixPopulation = 100
 
 class Combat(Vaisseau):
     def __init__(self, parent, nom, x, y):
@@ -254,6 +256,9 @@ class Combat(Vaisseau):
         self.vitesse = 12
         self.cible = 0
         self.ang = 0
+        self.prixMetal = 10000
+        self.prixEnergie = 9000
+        self.prixPopulation = 120
 
 class Exploration(Vaisseau):
     def __init__(self, parent, nom, x, y):
@@ -264,6 +269,9 @@ class Exploration(Vaisseau):
         self.vitesse = 25
         self.cible = 0
         self.ang = 0
+        self.prixMetal = 7000
+        self.prixEnergie = 6000
+        self.prixPopulation = 80
         
         
 class Laser(Vaisseau):
@@ -306,9 +314,9 @@ class Joueur():
                         "creerlaser": self.creerlaser}
 
         self.nbrPoints = 0
-        self.nbrMetal = random.randrange(500, 1000)
-        self.nbrEnergie = random.randrange(500, 1000)
-        self.nbrPopulation = random.randrange(50, 100)
+        self.nbrMetal = 10000
+        self.nbrEnergie = 10000
+        self.nbrPopulation = 500
 
         self.batiments = {
             "mines_metaux": [Mine_metaux(self.nom)],
@@ -322,8 +330,13 @@ class Joueur():
         type_vaisseau = params[0]
         if type_vaisseau == "Cargo":
             v = Cargo(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
-        else:
-            v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+        elif type_vaisseau == "Explo":
+            v = Exploration(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+        elif type_vaisseau == "Combat":
+            v = Combat(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+        # else:
+        #     v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+
         self.flotte[type_vaisseau][v.id] = v
 
         if self.nom == self.parent.parent.mon_nom:
@@ -465,6 +478,9 @@ class Modele():
                 #etoile.batiments["mines_metaux"]
                 self.joueurs[joueur].nbrMetal += etoile.batiments["mines_metaux"].quantite * etoile.batiments["mines_metaux"].tauxProduction
                 self.joueurs[joueur].nbrEnergie += etoile.batiments["centrales_electriques"].quantite * etoile.batiments["centrales_electriques"].tauxProduction
+                pointsMetaux = self.joueurs[joueur].nbrMetal * 0.000025
+                pointsEnergie = self.joueurs[joueur].nbrEnergie * 0.000025
+                self.joueurs[joueur].nbrPopulation += round(pointsMetaux + pointsEnergie)
 
     def production_pointage(self):
         for joueur in self.joueurs:
@@ -473,6 +489,7 @@ class Modele():
                 pointsMetaux = self.joueurs[joueur].nbrMetal * 0.001
                 pointsEnergie = self.joueurs[joueur].nbrEnergie * 0.001
                 self.joueurs[joueur].nbrPoints += round(pointsMetaux + pointsEnergie)
+
 
     def creer_troudevers(self, n):
         bordure = 10

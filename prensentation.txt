@@ -1,0 +1,76 @@
+
+Table des matieres - presentation du jeu
+
+deplacement libre 
+-> ameliore le gameplay car on peut bouger librement ce qui nous permet de positioner sa flotte de maniere strategique soit offensive ou defensive
+
+classes de vaisseau
+-> 3 classes differentes, exploration, combat, cargo
+chaque classe permet de faire des actions differentes selon le modele de vaisseau
+le joueur doit utiliser les 3 classes pour conquerir des etoiles
+exploration - > scan donc retourne uniquement de l'information
+cargo -> prend possession d'une planete
+combat -> peut conquerir des planetes deja colonisees ou detruire des vaisseaux ennemis
+
+combat
+-> le vaisseau de combat peut tirer sur des etoiles ou sur des vaisseaux
+
+interface
+-> images pour les vaisseaux, etoiles
+
+batiments
+-> il faut construire des batiments sur les etoiles (sauf etoile mere) pour pouvoir produire de l'energie, des metaux et apres elargir sa flotte 
+
+compte a rebours et fin de partie
+-> Le joueur qui lance partie peut definir dans cmb de temps la partie se termine
+	-> le joueur avec le plus de points (calcul selon metal energie nbr etoile) 	gagne
+-> La partie se termine lorsqu'un seul joueur possede des etoiles et celui ci gagne meme si il n'a pas le plus grand pointage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
