@@ -38,8 +38,8 @@ class Vue():
         # self.root.protocol("WM_DELETE_WINDOW", self.demander_abandon)
         
         # affichage/images
-        dossier_images = os.path.join(os.path.curdir, 'images')
-        print("curent dir" +os.getcwd())
+        dossier_images = os.path.join(os.path.curdir, 'Orion_client/images')
+        print("current dir" +os.getcwd())
 
         self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
         self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(4, 4)
@@ -182,11 +182,23 @@ class Vue():
         self.label_metal = Label(self.cadreoutils, text="Métal : " + str(0))
         self.label_energie = Label(self.cadreoutils, text="Énergie : " + str(0))
         self.label_population = Label(self.cadreoutils, text="Population : " + str(0))
+        self.label_mineMetaux = Label(self.cadreoutils, text="Mine de métaux : " + str(0))
+        self.label_centraleElectrique = Label(self.cadreoutils, text="Centrale électrique : " + str(0))
+        self.label_usine_vaisseau = Label(self.cadreoutils, text="Usine de vaisseaux : " + str(0))
+        self.label_laboratoireRecherche = Label(self.cadreoutils, text="Laboratoire de recherche :" + str(0))
+        self.label_systemeDefense = Label(self.cadreoutils, text="Systeme de défense : " + str(0))
+        
         self.label_ressources.pack(side=TOP)
         self.label_points.pack(side=TOP)
         self.label_metal.pack(side=TOP)
         self.label_energie.pack(side=TOP)
         self.label_population.pack(side=TOP)
+        self.label_mineMetaux.pack(side=TOP)
+        self.label_centraleElectrique.pack(side=TOP)
+        self.label_usine_vaisseau.pack(side=TOP)
+        self.label_laboratoireRecherche.pack(side=TOP)
+        self.label_systemeDefense.pack(side=TOP)
+        
         return self.cadrepartie
     
     def update_cadre_timer(self):
@@ -589,7 +601,12 @@ class Vue():
         self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
         self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
         self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), fg=self.returnCouleur(), font="Verdana 10 bold")
-
+        self.label_mineMetaux.config(text="Mine de métaux : " + str(self.modele.joueurs[self.mon_nom].batiments["mines_metaux"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_centraleElectrique.config(text="Centrales électrique : " + str(self.modele.joueurs[self.mon_nom].batiments["centrales_electriques"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_usine_vaisseau.config(text="Usines vaisseaux : " + str(self.modele.joueurs[self.mon_nom].batiments["usines_vaiseau"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_laboratoireRecherche.config(text="Laboratoires de recherche : " + str(self.modele.joueurs[self.mon_nom].batiments["laboratoires_recherche"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_systemeDefense.config(text="Systemes de défense : " + str(self.modele.joueurs[self.mon_nom].batiments["systemes_defense"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
+        
     # ajuster la liste des vaisseaux
     def lister_objet(self, joueur):
         self.info_liste.delete(0, END)
@@ -861,7 +878,7 @@ class Vue():
     def creercadre_fin_jeu(self, gagnant):
         self.cadre_fin_jeu = Frame(self.cadre_app)
         self.label_gagnant = Label(self.cadre_fin_jeu, text="Le gagnant est: " + gagnant)
-        self.boutonRetour = Button(self.cadre_fin_jeu, text="Retour au lobby", command=self.changer_cadre("splash"))
+        self.boutonRetour = Button(self.cadre_fin_jeu, text="Retour au lobby", command=lambda: self.changer_cadre("splash"))
         self.cadre_fin_jeu.config(bg="black", width=500, height=500)
         self.cadre_fin_jeu.pack()
         self.label_gagnant.pack()
