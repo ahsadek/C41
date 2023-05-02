@@ -16,7 +16,7 @@ import random
 
 class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
-        self.minutes = 10
+        self.minutes = 1
         self.secondes = 00
         self.parent = parent
         self.root = Tk()
@@ -124,7 +124,7 @@ class Vue():
         self.listelobby = Listbox(borderwidth=2, relief=GROOVE)
         
         #timer
-        self.liste_options_temps = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+        self.liste_options_temps = [1, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
         self.options_temps = ttk.Combobox(values=self.liste_options_temps, state="normal")
         self.options_temps.current(0)
         self.options_temps.bind("<<ComboboxSelected>>", self.update_timer)
@@ -190,7 +190,13 @@ class Vue():
         return self.cadrepartie
     
     def update_cadre_timer(self):
-        self.cadre_timer.config(text=(str(self.modele.minutes) + ":" + str(self.modele.secondes)))
+        timer_str = str(self.modele.minutes) + ":"
+        if self.modele.secondes >= 10:
+            timer_str += str(self.modele.secondes)
+        else:
+            timer_str += "0" + str(self.modele.secondes)
+        
+        self.cadre_timer.config(text=(timer_str))
 
     def creer_cadre_outils(self):
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")
@@ -860,7 +866,20 @@ class Vue():
 
     def creercadre_fin_jeu(self, gagnant):
         self.cadre_fin_jeu = Frame(self.cadre_app)
-        self.label_gagnant = Label(self.cadre_fin_jeu, text="Le gagnant est: " + gagnant)
+        self.label_gagnant = Label(self.cadre_fin_jeu)
+        if len(gagnant) == 1: 
+            self.label_gagnant.config(text="Le gagnant est: " + gagnant[0].nom)
+        else:
+            gagnants_str = "Les gagnants à égalité sont"
+            i = 0
+            for joueur in gagnant:
+                gagnants_str += "   " + joueur.nom
+                i += 1
+                if i != len(gagnant):
+                    gagnants_str += ","
+                
+            self.label_gagnant.config(text= gagnants_str)
+            
         self.boutonRetour = Button(self.cadre_fin_jeu, text="Retour au lobby", command=self.changer_cadre("splash"))
         self.cadre_fin_jeu.config(bg="black", width=500, height=500)
         self.cadre_fin_jeu.pack()

@@ -534,8 +534,8 @@ class Modele():
         
     def update_timer(self):
         if self.minutes == 0 and self.secondes == 0:
-            joueur_gagnant = self.select_joueur_gagnant()
-            self.parent.afficher_fin_jeu(joueur_gagnant)
+            
+            self.parent.afficher_fin_jeu(self.select_joueur_gagnant())
             pass
         else:
             if self.secondes > 0:
@@ -546,18 +546,19 @@ class Modele():
 
             self.boucle_timer = Timer(1.0, self.update_timer)
             self.parent.update_timer_vue()
-            self.boucle_timer.start()   
+            self.boucle_timer.start()  
             
             
     def select_joueur_gagnant(self):
-        joueur_gagnant = None
+        joueur_gagnant = []
         for joueur in self.joueurs:
-            # if len(self.joueurs[joueur].etoilescontrolees) == 0:
-            if joueur_gagnant == None:
-                joueur_gagnant = self.joueurs[joueur]
+            if len(joueur_gagnant) == 0:
+                joueur_gagnant.append(self.joueurs[joueur])
             else:
-                if self.joueurs[joueur].nbrPoints > joueur_gagnant.nbrPoints:
-                    joueur_gagnant = self.joueurs[joueur]          
+                if self.joueurs[joueur].nbrPoints > joueur_gagnant[0].nbrPoints:
+                    joueur_gagnant = [self.joueurs[joueur]]
+                elif self.joueurs[joueur].nbrPoints == joueur_gagnant[0].nbrPoints:
+                        joueur_gagnant.append(self.joueurs[joueur])
         return joueur_gagnant
     
     

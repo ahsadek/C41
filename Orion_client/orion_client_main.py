@@ -243,8 +243,8 @@ class Controleur():
         
     def ajouter_points(self, joueur, points):
         self.actionsrequises.append([self.mon_nom, "update_points", [joueur, points]])
-    
-    
+        
+        
     def lancer_timer(self, nb_minutes):
         self.modele.lancer_timer(nb_minutes)
         
