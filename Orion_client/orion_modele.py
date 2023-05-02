@@ -345,11 +345,11 @@ class Joueur():
         self.nbrPopulation = random.randrange(50, 100)
 
         self.batiments = {
-            "mines_metaux": [Mine_metaux(self.nom)],
-            "centrales_electriques": [Centrale_electrique(self.nom)],
-            "usines_vaiseau": [],
-            "laboratoires_recherche": [],
-            "systemes_defense": []
+            "mines_metaux": Mine_metaux(self.nom),
+            "centrales_electriques": Centrale_electrique(self.nom),
+            "usines_vaiseau": Usine_vaiseau(self.nom),
+            "laboratoires_recherche": Laboratoire_recherche(self.nom),
+            "systemes_defense": Systeme_defense(self.nom)
         }
         
         
