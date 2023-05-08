@@ -396,11 +396,11 @@ class Joueur():
                     break
         
         if type_vaisseau == "Cargo":
-            v = Cargo(self, self.nom, self.etoilecourante.x + 10, self.etoilecourante.y)
+            v = Cargo(self, self.nom, etoilecourante.x + 10, etoilecourante.y)
         elif type_vaisseau == "Explo":
-            v = Exploration(self, self.nom, self.etoilecourante.x + 10, self.etoilecourante.y)
+            v = Exploration(self, self.nom, etoilecourante.x + 10, etoilecourante.y)
         elif type_vaisseau == "Combat":
-            v = Combat(self, self.nom, self.etoilecourante.x + 10, self.etoilecourante.y)
+            v = Combat(self, self.nom, etoilecourante.x + 10, etoilecourante.y)
         # else:
         #     v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
 
@@ -529,7 +529,7 @@ class IA(Joueur):
 
         if self.cooldown == 0:
             # , self.etoilemere.id
-            v = self.creervaisseau(["Explo"])
+            v = self.creervaisseau(["Explo", self.etoilemere.id])
             cible = random.choice(self.parent.etoiles)
             v.acquerir_cible(cible, "Etoile")
             self.cooldown = random.randrange(self.cooldownmax) + self.cooldownmax

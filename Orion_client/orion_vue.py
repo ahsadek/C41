@@ -651,6 +651,7 @@ class Vue():
         
     #ajouter un laser a la liste de laser d'un vaisseau
     def attaquer(self, id_parent, id_cible, type_cible, proprietaire_cible): 
+        self.ma_selection = None
         self.parent.creer_laser(id_parent, id_cible, proprietaire_cible, type_cible)
         
         #vaisseau_parent.tirer_laser(cible, type_cible)
@@ -716,10 +717,10 @@ class Vue():
         metal = self.modele.joueurs[self.mon_nom].nbrMetal
         energie = self.modele.joueurs[self.mon_nom].nbrEnergie
 
-        self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)))
+        self.label_metal.config(text=("Metal : " + str(metal)))
+        self.label_energie.config(text=("Energie : " + str(energie)))
+        self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)))
 
 
     def dessiner_laser(self, obj, tailleF, joueur, type_obj):
