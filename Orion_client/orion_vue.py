@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 ##  version 2022 14 mars - jmd
+from asyncio import base_events
 import tkinter
 from tkinter import *
 from tkinter import ttk, PhotoImage
@@ -81,9 +82,6 @@ class Vue():
         # un canvas est utilisé pour 'dessiner' les widgets de cette fenêtre voir 'create_window' plus bas
         self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="grey20")
         self.canevas_splash.pack(fill=BOTH, expand=YES)
-
-        #bgLogin = self.canevas_splash.create_image(0, 0, anchor=NW, image=bgLogin)
-        #self.canevas_splash.itemconfig(bgLogin)
 
         # creation ds divers widgets (champ de texte 'Entry' et boutons cliquables (Button)
         self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE)
@@ -177,22 +175,24 @@ class Vue():
         self.creer_cadre_outils()
 
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
-        self.label_ressources = Label(self.cadreoutils, text="Ressources :")
-        self.label_points = Label(self.cadreoutils, text="Points : " + str(0))
-        self.label_metal = Label(self.cadreoutils, text="Métal : " + str(0))
-        self.label_energie = Label(self.cadreoutils, text="Énergie : " + str(0))
-        self.label_population = Label(self.cadreoutils, text="Population : " + str(0))
-        self.label_mineMetaux = Label(self.cadreoutils, text="Mine de métaux : " + str(0))
-        self.label_centraleElectrique = Label(self.cadreoutils, text="Centrale électrique : " + str(0))
-        self.label_usine_vaisseau = Label(self.cadreoutils, text="Usine de vaisseaux : " + str(0))
-        self.label_laboratoireRecherche = Label(self.cadreoutils, text="Laboratoire de recherche :" + str(0))
-        self.label_systemeDefense = Label(self.cadreoutils, text="Systeme de défense : " + str(0))
+        self.label_ressources = Label(self.cadreoutils, text="Ressources :", width=35, background="green")
+        self.label_points = Label(self.cadreoutils, text="Points : " + str(0), width=35, anchor="w", background="lightgreen")
+        self.label_metal = Label(self.cadreoutils, text="Métal : " + str(0), width=35, anchor="w", background="lightgreen")
+        self.label_energie = Label(self.cadreoutils, text="Énergie : " + str(0), width=35, anchor="w", background="lightgreen")
+        self.label_population = Label(self.cadreoutils, text="Population : " + str(0), width=35, anchor="w", background="lightgreen")
+        self.label_batiment = Label(self.cadreoutils, text="Bâtiments :", width=35, background="purple2")
+        self.label_mineMetaux = Label(self.cadreoutils, text="Mine de métaux : " + str(0), width=35, anchor="w", background="medium purple")
+        self.label_centraleElectrique = Label(self.cadreoutils, text="Centrale électrique : " + str(0), width=35, anchor="w", background="medium purple")
+        self.label_usine_vaisseau = Label(self.cadreoutils, text="Usine de vaisseaux : " + str(0), width=35, anchor="w", background="medium purple")
+        self.label_laboratoireRecherche = Label(self.cadreoutils, text="Laboratoire de recherche :" + str(0), width=35, anchor="w", background="medium purple")
+        self.label_systemeDefense = Label(self.cadreoutils, text="Systeme de défense : " + str(0), width=35, anchor="w", background="medium purple")
         
         self.label_ressources.pack(side=TOP)
         self.label_points.pack(side=TOP)
         self.label_metal.pack(side=TOP)
         self.label_energie.pack(side=TOP)
         self.label_population.pack(side=TOP)
+        self.label_batiment.pack(side=TOP)
         self.label_mineMetaux.pack(side=TOP)
         self.label_centraleElectrique.pack(side=TOP)
         self.label_usine_vaisseau.pack(side=TOP)
@@ -213,21 +213,21 @@ class Vue():
 
         self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="grey50")
         self.cadreinfogen.pack(fill=BOTH)
-        self.labid = Label(self.cadreinfogen, text="Inconnu")
+        self.labid = Label(self.cadreinfogen, text="Inconnu", width=35)
         self.labid.bind("<Button>", self.centrer_planemetemere)
         self.labid.pack()
-        self.btnmini = Button(self.cadreinfogen, text="MINI")
+        self.btnmini = Button(self.cadreinfogen, text="MINI", width=35, activebackground="lightblue")
         self.btnmini.bind("<Button>", self.afficher_mini)
         self.btnmini.pack()
 
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
+        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau", width=35, activebackground="lightblue")
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
-        self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
+        self.btncreercargo = Button(self.cadreinfochoix, text="Cargo", width=35, activebackground="lightblue")
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
         # self.btn_ConstruireBatiment = Button(self.cadreinfochoix, text="Batiment")
-        self.btn_ConstruireMineMetaux = Button(self.cadreinfochoix, text="Mine Metaux")
-        self.btn_ConstruireCentraleElectrique = Button(self.cadreinfochoix, text="Central Electrique")
+        self.btn_ConstruireMineMetaux = Button(self.cadreinfochoix, text="Mine Metaux", width=35, activebackground="lightblue")
+        self.btn_ConstruireCentraleElectrique = Button(self.cadreinfochoix, text="Central Electrique", width=35, activebackground="lightblue")
 
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
@@ -263,34 +263,32 @@ class Vue():
         
         #cadre action etoile
         self.cadre_actions_etoile = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
-        self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner")
-        self.btn_coloniser = Button(self.cadre_actions_etoile, text="Coloniser")
-        self.btn_attaquer = Button(self.cadre_actions_etoile, text="Attaquer")
+        self.btn_scanner = Button(self.cadre_actions_etoile, text="Scanner", width=35, activebackground="lightblue")
+        self.btn_coloniser = Button(self.cadre_actions_etoile, text="Coloniser", width=35, activebackground="lightblue")
+        self.btn_attaquer = Button(self.cadre_actions_etoile, text="Attaquer", width=35, activebackground="lightblue")
         #self.btn_scanner.pack()
         
 
         # cadre info etoile
         self.cadre_info_etoile = Frame(self.cadreinfo, height=300, width=300, bg="grey30")
-        self.champ_info = Label(self.cadre_info_etoile)
-        self.champ_metal = Label(self.cadre_info_etoile)
-        self.champ_energie = Label(self.cadre_info_etoile)
-        self.champ_population = Label(self.cadre_info_etoile)
+        self.champ_info = Label(self.cadre_info_etoile, width=35)
+        self.champ_metal = Label(self.cadre_info_etoile, width=35)
+        self.champ_energie = Label(self.cadre_info_etoile, width=35)
+        self.champ_population = Label(self.cadre_info_etoile, width=35)
         self.champ_info.pack()
         self.champ_metal.pack()
         self.champ_energie.pack()
         self.champ_population.pack()
 
         #timer
-        self.cadre_timer = Label(self.cadreoutils, text=(str(self.minutes) + ":" + str(self.secondes)), width=4, height=1, bg="pink")
+        self.cadre_timer = Label(self.cadreoutils, text=(str(self.minutes) + ":" + str(self.secondes)), width=35, height=1, bg="pink")
         self.cadre_timer.pack(side=BOTTOM)
 
         self.cadres["jeu"] = self.cadrepartie
         # fonction qui affiche le nombre d'items sur le jeu
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
 
-    def returnCouleur(self):
-        couleur = self.modele.joueurs[self.mon_nom].couleur
-        return couleur
+
         
     def deplacer_vaisseau(self, evt, id, t):
         self.parent.update_joueur_coloniser(self.mon_nom, "Scanner")
@@ -305,14 +303,14 @@ class Vue():
             else:
                 i += 1
         if self.modele.joueurs[self.mon_nom].etoilemere.id == id:
-            self.champ_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].nbrMetal)))
-            self.champ_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].nbrEnergie)))
-            self.champ_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)))
+            self.champ_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].nbrMetal)), anchor="w", background="light sky blue")
+            self.champ_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].nbrEnergie)), anchor="w", background="light sky blue")
+            self.champ_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), anchor="w", background="light sky blue")
         else:
-            self.champ_info.config(text="Informations :")
-            self.champ_metal.config(text=("Metal : " + str(self.modele.etoiles[i].ressources["metal"])))
-            self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])))
-            self.champ_population.config(text=("Population : " + str(self.modele.etoiles[i].ressources["population"])))
+            self.champ_info.config(text="Informations :", background="dodger blue")
+            self.champ_metal.config(text=("Metal : " + str(self.modele.etoiles[i].ressources["metal"])), anchor="w", background="light sky blue")
+            self.champ_energie.config(text=("Energie : " + str(self.modele.etoiles[i].ressources["energie"])), anchor="w", background="light sky blue")
+            self.champ_population.config(text=("Population : " + str(self.modele.etoiles[i].ressources["population"])), anchor="w", background="light sky blue")
         self.cadre_info_etoile.pack()
 
     def coloniser(self, evt, id, t):
@@ -596,16 +594,15 @@ class Vue():
         metal = self.modele.joueurs[self.mon_nom].nbrMetal
         energie = self.modele.joueurs[self.mon_nom].nbrEnergie
 
-        self.label_ressources.config(fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_mineMetaux.config(text="Mine de métaux : " + str(self.modele.joueurs[self.mon_nom].batiments["mines_metaux"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_centraleElectrique.config(text="Centrales électrique : " + str(self.modele.joueurs[self.mon_nom].batiments["centrales_electriques"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_usine_vaisseau.config(text="Usines vaisseaux : " + str(self.modele.joueurs[self.mon_nom].batiments["usines_vaiseau"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_laboratoireRecherche.config(text="Laboratoires de recherche : " + str(self.modele.joueurs[self.mon_nom].batiments["laboratoires_recherche"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
-        self.label_systemeDefense.config(text="Systemes de défense : " + str(self.modele.joueurs[self.mon_nom].batiments["systemes_defense"].quantite), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)))
+        self.label_metal.config(text=("Metal : " + str(metal)))
+        self.label_energie.config(text=("Energie : " + str(energie)))
+        self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)))
+        self.label_mineMetaux.config(text="Mine de métaux : " + str(self.modele.joueurs[self.mon_nom].batiments["mines_metaux"].quantite))
+        self.label_centraleElectrique.config(text="Centrales électrique : " + str(self.modele.joueurs[self.mon_nom].batiments["centrales_electriques"].quantite))
+        self.label_usine_vaisseau.config(text="Usines vaisseaux : " + str(self.modele.joueurs[self.mon_nom].batiments["usines_vaiseau"].quantite))
+        self.label_laboratoireRecherche.config(text="Laboratoires de recherche : " + str(self.modele.joueurs[self.mon_nom].batiments["laboratoires_recherche"].quantite))
+        self.label_systemeDefense.config(text="Systemes de défense : " + str(self.modele.joueurs[self.mon_nom].batiments["systemes_defense"].quantite))
         
     # ajuster la liste des vaisseaux
     def lister_objet(self, joueur):
@@ -877,8 +874,8 @@ class Vue():
 
     def creercadre_fin_jeu(self, gagnant):
         self.cadre_fin_jeu = Frame(self.cadre_app)
-        self.label_gagnant = Label(self.cadre_fin_jeu, text="Le gagnant est: " + gagnant)
-        self.boutonRetour = Button(self.cadre_fin_jeu, text="Retour au lobby", command=lambda: self.changer_cadre("splash"))
+        self.label_gagnant = Label(self.cadre_fin_jeu, text="Le gagnant est: " + gagnant, width=35)
+        self.boutonRetour = Button(self.cadre_fin_jeu, text="Retour au lobby", command=lambda: self.changer_cadre("splash"), width=35, activebackground="lightblue")
         self.cadre_fin_jeu.config(bg="black", width=500, height=500)
         self.cadre_fin_jeu.pack()
         self.label_gagnant.pack()
