@@ -227,16 +227,22 @@ class Vue():
         self.btnmini.pack()
 
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau", width=35, activebackground="lightblue")
-        self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
+        # self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau", width=35, activebackground="lightblue")
+        # self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo", width=35, activebackground="lightblue")
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
+        self.btncreerexplo = Button(self.cadreinfochoix, text="Explo", width=35, activebackground="lightblue")
+        self.btncreerexplo.bind("<Button>", self.creer_vaisseau)
+        self.btncreercombat = Button(self.cadreinfochoix, text="Combat", width=35, activebackground="lightblue")
+        self.btncreercombat.bind("<Button>", self.creer_vaisseau)
         # self.btn_ConstruireBatiment = Button(self.cadreinfochoix, text="Batiment")
         self.btn_ConstruireMineMetaux = Button(self.cadreinfochoix, text="Mine Metaux", width=35, activebackground="lightblue")
         self.btn_ConstruireCentraleElectrique = Button(self.cadreinfochoix, text="Central Electrique", width=35, activebackground="lightblue")
 
-        self.btncreervaisseau.pack()
+        # self.btncreervaisseau.pack()
         self.btncreercargo.pack()
+        self.btncreerexplo.pack()
+        self.btncreercombat.pack()
         # self.btn_ConstruireBatiment.pack()
         self.btn_ConstruireMineMetaux.pack()
         self.btn_ConstruireCentraleElectrique.pack()
@@ -597,14 +603,19 @@ class Vue():
         id = cible.id
         couleur = joueur1.couleur
         self.canevas.itemconfig(id, fill=couleur)
-        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
+        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile"))
 
-        metal = self.modele.joueurs[self.mon_nom].nbrMetal
-        energie = self.modele.joueurs[self.mon_nom].nbrEnergie
+        # metal = self.modele.joueurs[self.mon_nom].nbrMetal
+        # energie = self.modele.joueurs[self.mon_nom].nbrEnergie
+        #
+        # self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        # self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        # self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        # self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), fg=self.returnCouleur(), font="Verdana 10 bold")
 
         self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)))
-        self.label_metal.config(text=("Metal : " + str(metal)))
-        self.label_energie.config(text=("Energie : " + str(energie)))
+        self.label_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].nbrMetal)))
+        self.label_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].nbrEnergie)))
         self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)))
         self.label_mineMetaux.config(text="Mine de métaux : " + str(self.modele.joueurs[self.mon_nom].batiments["mines_metaux"].quantite))
         self.label_centraleElectrique.config(text="Centrales électrique : " + str(self.modele.joueurs[self.mon_nom].batiments["centrales_electriques"].quantite))
@@ -617,6 +628,8 @@ class Vue():
         self.info_liste.delete(0, END)
         self.refresh_liste_vaisseau(joueur)
        #self.info_liste.insert(END, obj + "; " + id)
+
+
         
         
     def refresh_liste_vaisseau(self, joueur):
@@ -677,16 +690,18 @@ class Vue():
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
                     tailleF = j.taille * self.zoom * 0.65
-                    if k == "Vaisseau":
+                    if k == "Combat":
                         # self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                         #                               (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                         #                               tags=(j.proprietaire, str(j.id), "Vaisseau", k, "artefact"))
-                        self.dessiner_vaisseau(j, tailleF, i, k)
+                        self.dessiner_combat(j, tailleF, i, k)
                         for laser in j.liste_laser:
                             tailleF = laser.taille * self.zoom
                             self.dessiner_laser(laser, tailleF, i, "Laser")
                     elif k == "Cargo":
                         self.dessiner_cargo(j, tailleF, i, k)
+                    else:
+                        self.dessiner_explo(j, tailleF, i, k)
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
@@ -698,6 +713,14 @@ class Vue():
                                          i.x + i.pulse, i.y + i.pulse, outline=i.couleur, width=2, fill="grey15",
                                          tags=("", i.id, "Porte_de_ver", "objet_spatial"))
 
+        metal = self.modele.joueurs[self.mon_nom].nbrMetal
+        energie = self.modele.joueurs[self.mon_nom].nbrEnergie
+
+        self.label_points.config(text=("Points : " + str(self.modele.joueurs[self.mon_nom].nbrPoints)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_metal.config(text=("Metal : " + str(metal)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_energie.config(text=("Energie : " + str(energie)), fg=self.returnCouleur(), font="Verdana 10 bold")
+        self.label_population.config(text=("Population : " + str(self.modele.joueurs[self.mon_nom].nbrPopulation)), fg=self.returnCouleur(), font="Verdana 10 bold")
+
 
     def dessiner_laser(self, obj, tailleF, joueur, type_obj):
         self.canevas.create_oval((obj.x - tailleF), (obj.y - tailleF),
@@ -705,10 +728,28 @@ class Vue():
                                  tags=(obj.proprietaire, str(obj.id), "Laser", type_obj, "artefact"))
 
 
-    def dessiner_vaisseau(self, obj, tailleF, joueur, type_obj):
+    def dessiner_combat(self, obj, tailleF, joueur, type_obj):
         t = obj.taille * self.zoom
 
-        imageVaissExploCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= self.imageVaissExplo, tags=("artefact")) # tranformer imageVaissExplo en photoimage
+        imageVaissCombatCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= self.imageVaissFighter, tags=("artefact")) # tranformer imageVaissExplo en photoimage
+
+        self.canevas.create_oval((obj.x + tailleF + 7), (obj.y + tailleF),
+                                 (obj.x - tailleF + 7), (obj.y - tailleF), fill=joueur.couleur,
+                                 tags=(obj.proprietaire, str(obj.id), "Vaisseau", type_obj, "artefact"))
+
+        # centrer image
+        image_x = obj.x - 25
+        image_y = obj.y - 15
+
+        # positioner image au centre
+        self.canevas.coords(imageVaissCombatCanvas, image_x, image_y)
+
+    def dessiner_explo(self, obj, tailleF, joueur, type_obj):
+        t = obj.taille * self.zoom
+
+        imageVaissExploCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image=self.imageVaissExplo,
+                                                          tags=(
+                                                              "artefact"))  # tranformer imageVaissExplo en photoimage
 
         self.canevas.create_oval((obj.x + tailleF), (obj.y + tailleF),
                                  (obj.x - tailleF), (obj.y - tailleF), fill=joueur.couleur,

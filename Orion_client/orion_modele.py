@@ -147,7 +147,6 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
                         "Espace": self.arriver_espace}
         self.liste_laser = []
         self.firing = False
-
     def jouer_prochain_coup(self, trouver_nouveau=0):
         #lasers
         for laser in self.liste_laser:
@@ -162,8 +161,10 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
                     self.firing = False
                     if laser.type_cible == "Cargo":
                         del laser.cible.parent.flotte["Cargo"][laser.cible.id]
-                    elif laser.type_cible == "Vaisseau":
-                        del laser.cible.parent.flotte["Vaisseau"][laser.cible.id]
+                    elif laser.type_cible == "Combat":
+                        del laser.cible.parent.flotte["Combat"][laser.cible.id]
+                    elif laser.type_cible == "Explo":
+                        del laser.cible.parent.flotte["Explo"][laser.cible.id]
                     elif laser.type_cible == "Etoile":
                         ancien_proprietaire = laser.cible.proprietaire
                         laser.cible.proprietaire = laser.proprietaire
@@ -272,6 +273,9 @@ class Cargo(Vaisseau):
         self.vitesse = 5
         self.cible = 0
         self.ang = 0
+        self.prixMetal = 9000
+        self.prixEnergie = 8000
+        self.prixPopulation = 100
 
 class Combat(Vaisseau):
     def __init__(self, parent, nom, x, y):
@@ -282,6 +286,9 @@ class Combat(Vaisseau):
         self.vitesse = 12
         self.cible = 0
         self.ang = 0
+        self.prixMetal = 10000
+        self.prixEnergie = 9000
+        self.prixPopulation = 120
 
 class Exploration(Vaisseau):
     def __init__(self, parent, nom, x, y):
@@ -292,6 +299,9 @@ class Exploration(Vaisseau):
         self.vitesse = 25
         self.cible = 0
         self.ang = 0
+        self.prixMetal = 7000
+        self.prixEnergie = 6000
+        self.prixPopulation = 80
         
         
 class Laser(Vaisseau):
@@ -330,8 +340,9 @@ class Joueur():
         self.coloniser = None
         self.etoilescontrolees = [etoilemere]
         self.id_etoile = None
-        self.flotte = {"Vaisseau": {},
-                       "Cargo": {}}
+        self.flotte = {"Explo": {},
+                       "Cargo": {},
+                       "Combat": {}}
         self.actions = {"creervaisseau": self.creervaisseau,
                         "ciblerflotte": self.ciblerflotte,
                         "ciblerflotteespace": self.ciblerFlotteEspace,
@@ -341,9 +352,9 @@ class Joueur():
                         "lancer_timer": self.lancer_timer}
 
         self.nbrPoints = 0
-        self.nbrMetal = random.randrange(500, 1000)
-        self.nbrEnergie = random.randrange(500, 1000)
-        self.nbrPopulation = random.randrange(50, 100)
+        self.nbrMetal = 10000
+        self.nbrEnergie = 10000
+        self.nbrPopulation = 500
 
         self.batiments = {
             "mines_metaux": Mine_metaux(self.nom),
@@ -372,6 +383,7 @@ class Joueur():
         
     def creervaisseau(self, params):
         type_vaisseau = params[0]
+        
         id_etoilecourante = params[1]
         etoilecourante = None
 
@@ -382,12 +394,16 @@ class Joueur():
                 if etoile.id == id_etoilecourante:
                     etoilecourante = etoile
                     break
-
-
+        
         if type_vaisseau == "Cargo":
-            v = Cargo(self, self.nom,  etoilecourante.x + 10, etoilecourante.y)  #            v = Cargo(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
-        else:
-            v = Vaisseau(self, self.nom, etoilecourante.x + 10, etoilecourante.y) # v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+            v = Cargo(self, self.nom, self.etoilecourante.x + 10, self.etoilecourante.y)
+        elif type_vaisseau == "Explo":
+            v = Exploration(self, self.nom, self.etoilecourante.x + 10, self.etoilecourante.y)
+        elif type_vaisseau == "Combat":
+            v = Combat(self, self.nom, self.etoilecourante.x + 10, self.etoilecourante.y)
+        # else:
+        #     v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+
         self.flotte[type_vaisseau][v.id] = v
 
         if self.nom == self.parent.parent.mon_nom:
@@ -398,8 +414,7 @@ class Joueur():
     def creerlaser(self, params):
         id_parent, id_cible, proprietaire_cible, type_cible = params
         
-        
-        vaisseau_parent = self.parent.joueurs[self.nom].flotte["Vaisseau"][id_parent]
+        vaisseau_parent = self.parent.joueurs[self.nom].flotte["Combat"][id_parent]
         if type_cible == "Etoile":
             for etoile in self.parent.etoiles:
                 if etoile.id == id_cible:
@@ -423,11 +438,14 @@ class Joueur():
         idori, iddesti, type_cible, type_origine = ids
         ori = None
         
-        if type_origine == "Vaisseau":
-            self.parent.joueurs[self.nom].flotte["Vaisseau"][idori].firing = False
+        if type_origine == "Combat":
+            self.parent.joueurs[self.nom].flotte["Combat"][idori].firing = False
 
         if idori in self.flotte["Cargo"]:       # laisser ce bout de code ici, sinon tout casse
             ori = self.flotte["Cargo"][idori]
+
+        if idori in self.flotte["Explo"]:  # laisser ce bout de code ici, sinon tout casse
+            ori = self.flotte["Explo"][idori]
 
         for i in self.flotte:   # code prof, fonctionne seulement pour vaisseau
             if idori in self.flotte[i]:
@@ -455,6 +473,8 @@ class Joueur():
 
     def ciblerFlotteEspace(self, params):
         idOrigine, posDestinationX, posDestinationY, typeCible, type_origine = params
+        if type_origine == "Combat":
+            self.parent.joueurs[self.nom].flotte["Combat"][idOrigine].firing = False
         ori = None
         for i in self.flotte.keys():
             if idOrigine in self.flotte[i]:
@@ -508,7 +528,8 @@ class IA(Joueur):
         self.avancer_flotte(1)
 
         if self.cooldown == 0:
-            v = self.creervaisseau(["Vaisseau", self.etoilemere.id])
+            # , self.etoilemere.id
+            v = self.creervaisseau(["Explo"])
             cible = random.choice(self.parent.etoiles)
             v.acquerir_cible(cible, "Etoile")
             self.cooldown = random.randrange(self.cooldownmax) + self.cooldownmax
@@ -573,6 +594,9 @@ class Modele():
                 #etoile.batiments["mines_metaux"]
                 self.joueurs[joueur].nbrMetal += etoile.batiments["mines_metaux"].quantite * etoile.batiments["mines_metaux"].tauxProduction
                 self.joueurs[joueur].nbrEnergie += etoile.batiments["centrales_electriques"].quantite * etoile.batiments["centrales_electriques"].tauxProduction
+                pointsMetaux = self.joueurs[joueur].nbrMetal * 0.000025
+                pointsEnergie = self.joueurs[joueur].nbrEnergie * 0.000025
+                self.joueurs[joueur].nbrPopulation += round(pointsMetaux + pointsEnergie)
 
     def production_pointage(self):
         for joueur in self.joueurs:
