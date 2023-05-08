@@ -650,16 +650,18 @@ class Vue():
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
                     tailleF = j.taille * self.zoom * 0.65
-                    if k == "Vaisseau":
+                    if k == "Combat":
                         # self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                         #                               (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                         #                               tags=(j.proprietaire, str(j.id), "Vaisseau", k, "artefact"))
-                        self.dessiner_vaisseau(j, tailleF, i, k)
+                        self.dessiner_combat(j, tailleF, i, k)
                         for laser in j.liste_laser:
                             tailleF = laser.taille * self.zoom
                             self.dessiner_laser(laser, tailleF, i, "Laser")
                     elif k == "Cargo":
                         self.dessiner_cargo(j, tailleF, i, k)
+                    else:
+                        self.dessiner_explo(j, tailleF, i, k)
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
@@ -686,10 +688,28 @@ class Vue():
                                  tags=(obj.proprietaire, str(obj.id), "Laser", type_obj, "artefact"))
 
 
-    def dessiner_vaisseau(self, obj, tailleF, joueur, type_obj):
+    def dessiner_combat(self, obj, tailleF, joueur, type_obj):
         t = obj.taille * self.zoom
 
-        imageVaissExploCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= self.imageVaissExplo, tags=("artefact")) # tranformer imageVaissExplo en photoimage
+        imageVaissCombatCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image= self.imageVaissFighter, tags=("artefact")) # tranformer imageVaissExplo en photoimage
+
+        self.canevas.create_oval((obj.x + tailleF + 7), (obj.y + tailleF),
+                                 (obj.x - tailleF + 7), (obj.y - tailleF), fill=joueur.couleur,
+                                 tags=(obj.proprietaire, str(obj.id), "Vaisseau", type_obj, "artefact"))
+
+        # centrer image
+        image_x = obj.x - 25
+        image_y = obj.y - 15
+
+        # positioner image au centre
+        self.canevas.coords(imageVaissCombatCanvas, image_x, image_y)
+
+    def dessiner_explo(self, obj, tailleF, joueur, type_obj):
+        t = obj.taille * self.zoom
+
+        imageVaissExploCanvas = self.canevas.create_image(obj.x, obj.y, anchor=NW, image=self.imageVaissExplo,
+                                                          tags=(
+                                                              "artefact"))  # tranformer imageVaissExplo en photoimage
 
         self.canevas.create_oval((obj.x + tailleF), (obj.y + tailleF),
                                  (obj.x - tailleF), (obj.y - tailleF), fill=joueur.couleur,

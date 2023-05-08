@@ -157,8 +157,10 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
                     self.firing = False
                     if laser.type_cible == "Cargo":
                         del laser.cible.parent.flotte["Cargo"][laser.cible.id]
-                    elif laser.type_cible == "Vaisseau":
-                        del laser.cible.parent.flotte["Vaisseau"][laser.cible.id]
+                    elif laser.type_cible == "Combat":
+                        del laser.cible.parent.flotte["Combat"][laser.cible.id]
+                    elif laser.type_cible == "Explo":
+                        del laser.cible.parent.flotte["Explo"][laser.cible.id]
                     elif laser.type_cible == "Etoile":
                         ancien_proprietaire = laser.cible.proprietaire
                         laser.cible.proprietaire = laser.proprietaire
@@ -306,8 +308,9 @@ class Joueur():
         self.couleur = couleur
         self.log = []
         self.etoilescontrolees = [etoilemere]
-        self.flotte = {"Vaisseau": {},
-                       "Cargo": {}}
+        self.flotte = {"Explo": {},
+                       "Cargo": {},
+                       "Combat": {}}
         self.actions = {"creervaisseau": self.creervaisseau,
                         "ciblerflotte": self.ciblerflotte,
                         "ciblerflotteespace": self.ciblerFlotteEspace,
@@ -347,7 +350,7 @@ class Joueur():
     def creerlaser(self, params):
         id_parent, id_cible, proprietaire_cible, type_cible = params
         
-        vaisseau_parent = self.parent.joueurs[self.nom].flotte["Vaisseau"][id_parent]
+        vaisseau_parent = self.parent.joueurs[self.nom].flotte["Combat"][id_parent]
         if type_cible == "Etoile":
             for etoile in self.parent.etoiles:
                 if etoile.id == id_cible:
@@ -370,11 +373,14 @@ class Joueur():
         idori, iddesti, type_cible, type_origine = ids
         ori = None
         
-        if type_origine == "Vaisseau":
-            self.parent.joueurs[self.nom].flotte["Vaisseau"][idori].firing = False
+        if type_origine == "Combat":
+            self.parent.joueurs[self.nom].flotte["Combat"][idori].firing = False
 
         if idori in self.flotte["Cargo"]:       # laisser ce bout de code ici, sinon tout casse
             ori = self.flotte["Cargo"][idori]
+
+        if idori in self.flotte["Explo"]:  # laisser ce bout de code ici, sinon tout casse
+            ori = self.flotte["Explo"][idori]
 
         for i in self.flotte:   # code prof, fonctionne seulement pour vaisseau
             if idori in self.flotte[i]:
@@ -402,8 +408,8 @@ class Joueur():
 
     def ciblerFlotteEspace(self, params):
         idOrigine, posDestinationX, posDestinationY, typeCible, type_origine = params
-        if type_origine == "Vaisseau":
-            self.parent.joueurs[self.nom].flotte["Vaisseau"][idOrigine].firing = False
+        if type_origine == "Combat":
+            self.parent.joueurs[self.nom].flotte["Combat"][idOrigine].firing = False
         ori = None
         for i in self.flotte.keys():
             if idOrigine in self.flotte[i]:
@@ -448,7 +454,7 @@ class IA(Joueur):
         self.avancer_flotte(1)
 
         if self.cooldown == 0:
-            v = self.creervaisseau(["Vaisseau"])
+            v = self.creervaisseau(["Explo"])
             cible = random.choice(self.parent.etoiles)
             v.acquerir_cible(cible, "Etoile")
             self.cooldown = random.randrange(self.cooldownmax) + self.cooldownmax
