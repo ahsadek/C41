@@ -125,7 +125,7 @@ class Vue():
         
         #timer
         self.liste_options_temps = [1, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
-        self.options_temps = ttk.Combobox(values=self.liste_options_temps, state="normal")
+        self.options_temps = ttk.Combobox(values=self.liste_options_temps, state=DISABLED)
         self.options_temps.current(0)
         self.options_temps.bind("<<ComboboxSelected>>", self.update_timer)
         self.label_temps = Label(text="Durée de la partie en minutes :")
@@ -459,6 +459,7 @@ class Vue():
             self.listelobby.insert(END, i[0])
         if self.parent.joueur_createur:
             self.btnlancerpartie.config(state=NORMAL)
+            self.options_temps.config(state=NORMAL)
 
     def inscrire_joueur(self):
         nom = self.nomsplash.get()
@@ -472,7 +473,8 @@ class Vue():
     def initialiser_avec_modele(self, modele):
         self.mon_nom = self.parent.mon_nom
         self.modele = modele
-        self.parent.lancer_timer(self.minutes)
+        if self.parent.joueur_createur:
+            self.parent.lancer_timer(self.minutes)
         self.canevas.config(scrollregion=(0, 0, modele.largeur, modele.hauteur))
 
         self.labid.config(text=self.mon_nom)

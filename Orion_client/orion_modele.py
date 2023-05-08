@@ -337,7 +337,8 @@ class Joueur():
                         "ciblerflotteespace": self.ciblerFlotteEspace,
                         "creerlaser": self.creerlaser,
                         "update_points": self.update_points,
-                        "update_coloniser": self.update_coloniser}
+                        "update_coloniser": self.update_coloniser,
+                        "lancer_timer": self.lancer_timer}
 
         self.nbrPoints = 0
         self.nbrMetal = random.randrange(500, 1000)
@@ -351,6 +352,12 @@ class Joueur():
             "laboratoires_recherche": Laboratoire_recherche(self.nom),
             "systemes_defense": Systeme_defense(self.nom)
         }
+        
+        
+    def lancer_timer(self, params):
+        nb_minutes = params[0]
+        self.parent.minutes = nb_minutes
+        self.parent.update_timer()
         
         
     def update_points(self, params):
@@ -527,9 +534,7 @@ class Modele():
         self.jeu_actif = True
         
         
-    def lancer_timer(self, nb_minutes):
-        self.minutes = nb_minutes
-        self.update_timer()
+    
         
         
     def update_timer(self):

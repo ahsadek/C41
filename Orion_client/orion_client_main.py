@@ -246,7 +246,7 @@ class Controleur():
         
         
     def lancer_timer(self, nb_minutes):
-        self.modele.lancer_timer(nb_minutes)
+        self.actionsrequises.append([self.mon_nom, "lancer_timer", [nb_minutes]])
         
         
     def update_timer_vue(self):
