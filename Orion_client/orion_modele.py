@@ -226,8 +226,9 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
     def arriver_etoile(self):
         self.parent.log.append(
             ["Arrive:", self.parent.parent.cadre_courant, "Etoile", self.id, self.cible.id, self.cible.proprietaire])
-        if not self.cible.proprietaire:
+        if not self.cible.proprietaire and isinstance(self, Cargo):
             self.cible.proprietaire = self.proprietaire
+            self.parent.update_points([self.parent.nom, 15])
         cible = self.cible
         self.cible = 0
         return ["Etoile", cible]

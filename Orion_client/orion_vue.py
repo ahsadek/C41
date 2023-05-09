@@ -327,7 +327,6 @@ class Vue():
 
     def coloniser(self, evt, id, t):
         self.parent.update_joueur_coloniser(self.mon_nom, "Coloniser")
-        self.parent.ajouter_points(self.mon_nom, 15)
         i = 0
         for etoile in self.modele.etoiles:
             if etoile.id == id:
