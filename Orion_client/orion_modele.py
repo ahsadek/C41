@@ -164,6 +164,7 @@ class Vaisseau():   # vaisseau de combat, classe faite donc implementer a faire
                     elif laser.type_cible == "Combat":
                         del laser.cible.parent.flotte["Combat"][laser.cible.id]
                     elif laser.type_cible == "Explo":
+                        print("test")
                         del laser.cible.parent.flotte["Explo"][laser.cible.id]
                     elif laser.type_cible == "Etoile":
                         ancien_proprietaire = laser.cible.proprietaire
