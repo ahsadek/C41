@@ -17,11 +17,12 @@ import random
 
 class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
-        self.minutes = 1
+        self.minutes = 10
         self.secondes = 00
         self.parent = parent
         self.root = Tk()
         self.root.title("Je suis " + mon_nom)
+        # self.root.config(cursor="sailboat")
         self.mon_nom = mon_nom
         # attributs
         self.taille_minimap = 240 # 240 quoi?
@@ -41,6 +42,9 @@ class Vue():
         # affichage/images
         dossier_images = os.path.join(os.path.curdir, 'images')
         print("current dir" +os.getcwd())
+
+        self.imageNebula = PhotoImage(file=os.path.join(dossier_images, 'nebula.png')).subsample(1, 1)
+
 
         self.imageEtoile = PhotoImage(file=os.path.join(dossier_images, 'star.png')).subsample(6,6)
         self.imageVaissExplo = PhotoImage(file=os.path.join(dossier_images, 'vaisseauExploration.png')).subsample(4, 4)
@@ -122,7 +126,7 @@ class Vue():
         self.listelobby = Listbox(borderwidth=2, relief=GROOVE)
         
         #timer
-        self.liste_options_temps = [1, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+        self.liste_options_temps = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
         self.options_temps = ttk.Combobox(values=self.liste_options_temps, state=DISABLED)
         self.options_temps.current(0)
         self.options_temps.bind("<<ComboboxSelected>>", self.update_timer)
@@ -478,6 +482,7 @@ class Vue():
         self.modele = modele
         if self.parent.joueur_createur:
             self.parent.lancer_timer(self.minutes)
+
         self.canevas.config(scrollregion=(0, 0, modele.largeur, modele.hauteur))
 
         self.labid.config(text=self.mon_nom)
@@ -510,6 +515,12 @@ class Vue():
             n = random.randrange(3) + 1
             col = random.choice(["LightYellow", "azure1", "pink"])
             self.canevas.create_oval(x, y, x + n, y + n, fill=col, tags=("fond",))
+
+        for i in range(50):
+            x = random.randrange(int(mod.largeur))
+            y = random.randrange(int(mod.hauteur))
+            imageNebula = self.canevas.create_image(x,y, anchor= NW, image = self.imageNebula, tags=("","","nebula"))
+            self.canevas.itemconfig(imageNebula)
 
         # affichage des etoiles
         for i in mod.etoiles:
@@ -811,8 +822,9 @@ class Vue():
                 if t[0] == self.mon_nom and t[2] == "Etoile" and len(self.modele.joueurs[self.mon_nom].etoilescontrolees) > 1:
                     self.afficher_ressources(t[1])
 
-        if t:  # il y a des tags
+        if t and t[2] != "nebula":  # il y a des tags
             if t[0] == "" and t[2] == "Etoile":
+
                 self.btn_scanner.config(command=lambda: self.deplacer_vaisseau(evt, t[1], t))
                 self.btn_coloniser.config(command=lambda: self.coloniser(evt, t[1], t))
                 self.montrer_actions_etoile()
@@ -853,19 +865,24 @@ class Vue():
                     self.montrer_etoile_selection()
                 elif t[2] == "Cargo" or t[2] == "Explo" or t[2] == "Combat":
                     self.montrer_flotte_selection()
-                
-        else:  # si on n'a pas choisi une etoile (on veut se deplacer vers l'espace)
+
+        elif not t or t[2]=="nebula":  # si on n'a pas choisi une etoile (on veut se deplacer vers l'espace)
             #interface
             print("Region inconnue")
             self.btn_coloniser.pack_forget()
             self.btn_scanner.pack_forget()
             self.btn_attaquer.pack_forget()
 
+
+
             #deplacement dans le vide
             if self.ma_selection != None:
                 if self.ma_selection[2] == "Combat" or self.ma_selection[2] == "Cargo" or self.ma_selection[2] == "Explo":  # si on a deja choisi un vaiseau pour avoir un point de depart
                     positionDestinationX = self.canevas.canvasx(evt.x)
                     positionDestinationY = self.canevas.canvasy(evt.y)
+                    # if t[2]=="nebula":
+
+
                     print(f'X: {positionDestinationX}')
                     print(f'Y: {positionDestinationY}')
 
@@ -876,6 +893,8 @@ class Vue():
                 else:
                     print("Vous devez choisir un point d'origine")
                     self.ma_selection = None
+
+    # def clique_nebula(self, image, ):
 
     def deplacer_flotte(self, t):
         if ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
