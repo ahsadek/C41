@@ -819,7 +819,7 @@ class Vue():
                 self.montrer_actions_etoile()
                 
                 if self.ma_selection != None:    
-                    if self.ma_selection[2] == "Cargo":
+                    if self.ma_selection[2] == "Cargo" or self.ma_selection[2] == "Combat":
                         self.btn_coloniser.pack()
                         self.btn_scanner.pack_forget()
                         self.btn_attaquer.pack_forget()
@@ -832,7 +832,7 @@ class Vue():
                     if len(t) >= 3:
                         if t[2] == "Porte_de_ver":
                             self.deplacer_flotte(t)
-                if self.ma_selection[2] == "Explo" or "Combat":
+                if self.ma_selection[2] != "Cargo":
                     self.btn_coloniser.pack_forget()
                     self.btn_attaquer.pack_forget()
                     if self.ma_selection[2] == "Explo":
