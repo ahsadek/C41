@@ -672,7 +672,7 @@ class Vue():
                         self.canevas.create_oval(x - t, y - t, x + t, y + t,
                                                  dash=(2, 2), outline=mod.joueurs[self.mon_nom].couleur,
                                                  tags=("multiselection", "marqueur"))
-            elif self.ma_selection[2] == "Vaisseau" or self.ma_selection[2] == "Cargo":
+            elif self.ma_selection[2] == "Explo" or self.ma_selection[2] == "Cargo" or self.ma_selection[2] == "Combat":
                 for j in joueur.flotte:
                     for i in joueur.flotte[j]:
                         i = joueur.flotte[j][i]
@@ -736,7 +736,7 @@ class Vue():
 
         self.canevas.create_oval((obj.x + tailleF + 7), (obj.y + tailleF),
                                  (obj.x - tailleF + 7), (obj.y - tailleF), fill=joueur.couleur,
-                                 tags=(obj.proprietaire, str(obj.id), "Vaisseau", type_obj, "artefact"))
+                                 tags=(obj.proprietaire, str(obj.id), "Combat", type_obj, "artefact"))
 
         # centrer image
         image_x = obj.x - 25
@@ -754,7 +754,7 @@ class Vue():
 
         self.canevas.create_oval((obj.x + tailleF), (obj.y + tailleF),
                                  (obj.x - tailleF), (obj.y - tailleF), fill=joueur.couleur,
-                                 tags=(obj.proprietaire, str(obj.id), "Vaisseau", type_obj, "artefact"))
+                                 tags=(obj.proprietaire, str(obj.id), "Explo", type_obj, "artefact"))
 
         # centrer image
         image_x = obj.x - 25
@@ -828,20 +828,21 @@ class Vue():
                         # self.cadreoutils.after(2000, self.messageArrivee.pack())
 
             if self.ma_selection != None:
-                if self.ma_selection[2] == "Vaisseau" or "Cargo":
+                if self.ma_selection[2] == "Explo" or "Cargo" or "Combat":
                     if len(t) >= 3:
                         if t[2] == "Porte_de_ver":
                             self.deplacer_flotte(t)
-                if self.ma_selection[2] == "Vaisseau":
+                if self.ma_selection[2] == "Explo" or "Combat":
                     self.btn_coloniser.pack_forget()
                     self.btn_attaquer.pack_forget()
-                    self.btn_scanner.pack()
+                    if self.ma_selection[2] == "Explo":
+                        self.btn_scanner.pack()
 
 
             #si on appuie sur un vaisseau ennemi
             if self.ma_selection != None:
                 if len(t) >= 3:
-                    if (t[0] != self.mon_nom and t[0] != "") and (t[2] == "Vaisseau" or t[2] == "Cargo" or t[2] == "VaisseauCombat" or t[2] == "Etoile") and self.ma_selection[2] == "Vaisseau":
+                    if (t[0] != self.mon_nom and t[0] != "") and (t[2] == "Explo" or t[2] == "Cargo" or t[2] == "Combat" or t[2] == "Etoile") and self.ma_selection[2] == "Combat":
                         self.btn_attaquer.config(command=lambda: self.attaquer(self.ma_selection[1], t[1], t[2], t[0]))
                         self.btn_attaquer.pack()
                         self.montrer_actions_etoile()
@@ -851,7 +852,7 @@ class Vue():
                 if t[2] == "Etoile":
                     self.modele.joueurs[t[0]].etoileselect = t[1]
                     self.montrer_etoile_selection()
-                elif t[2] == "Cargo" or t[2] == "Vaisseau":
+                elif t[2] == "Cargo" or t[2] == "Explo" or t[2] == "Combat":
                     self.montrer_flotte_selection()
                 
         else:  # si on n'a pas choisi une etoile (on veut se deplacer vers l'espace)
@@ -863,7 +864,7 @@ class Vue():
 
             #deplacement dans le vide
             if self.ma_selection != None:
-                if self.ma_selection[2] == "Vaisseau" or self.ma_selection[2] == "Cargo":  # si on a deja choisi un vaiseau pour avoir un point de depart
+                if self.ma_selection[2] == "Combat" or self.ma_selection[2] == "Cargo" or self.ma_selection[2] == "Explo":  # si on a deja choisi un vaiseau pour avoir un point de depart
                     positionDestinationX = self.canevas.canvasx(evt.x)
                     positionDestinationY = self.canevas.canvasy(evt.y)
                     print(f'X: {positionDestinationX}')

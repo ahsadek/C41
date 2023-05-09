@@ -282,6 +282,7 @@ class Combat(Vaisseau):
         Vaisseau.__init__(self, parent, nom, x, y)
         self.combat = 1000
         self.energie = 500
+        self.hp = 150
         self.taille = 6
         self.vitesse = 12
         self.cible = 0
@@ -294,6 +295,7 @@ class Exploration(Vaisseau):
     def __init__(self, parent, nom, x, y):
         Vaisseau.__init__(self, parent, nom, x, y)
         self.exploration = 1000
+        self.hp = 75
         self.energie = 500
         self.taille = 6
         self.vitesse = 25
@@ -313,8 +315,9 @@ class Laser(Vaisseau):
         self.cible = cible
         self.type_cible = type_cible
         self.arriver = {"Etoile": self.arriver_etoile,
-                        "Vaisseau": self.arriver_vaisseau,
-                        "Cargo": self.arriver_vaisseau}
+                        "Combat": self.arriver_vaisseau,
+                        "Cargo": self.arriver_vaisseau,
+                        "Exploration": self.arriver_vaisseau}
 
 
     def arriver_etoile(self):
