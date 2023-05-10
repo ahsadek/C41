@@ -950,7 +950,7 @@ class Vue():
             gagnants_str = "Les gagnants à égalité sont"
             i = 0
             for joueur in gagnant:
-                gagnants_str += "   " + joueur.nom
+                gagnants_str += "   " + joueur
                 i += 1
                 if i != len(gagnant):
                     gagnants_str += ","
