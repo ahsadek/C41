@@ -65,6 +65,7 @@ class Vue():
             self.root.after(500, self.root.destroy)
 
     ####### INTERFACES GRAPHIQUES
+    # Méthode qui sert à changer les cadres
     def changer_cadre(self, nomcadre):
         cadre = self.cadres[nomcadre]
         if self.cadre_actif:
@@ -73,6 +74,7 @@ class Vue():
         self.cadre_actif.pack(expand=1, fill=BOTH)
 
     ###### LES CADRES ############################################################################################
+    # Méthode qui creer les différents cadres du jeu
     def creer_cadres(self, urlserveur, mon_nom, msg_initial):
         self.cadres["splash"] = self.creer_cadre_splash(urlserveur, mon_nom, msg_initial)
         self.cadres["lobby"] = self.creer_cadre_lobby()
@@ -142,6 +144,7 @@ class Vue():
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrelobby
     
+    # Méthode qui met à jour le timer
     def update_timer(self, event):
         self.minutes = int(self.options_temps.get())
 
@@ -305,12 +308,13 @@ class Vue():
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
 
 
-        
+    # Méthode qui deplace les vaisseaux        
     def deplacer_vaisseau(self, evt, id, t):
         self.parent.update_joueur_coloniser(self.mon_nom, "Scanner")
         self.deplacer_flotte(t)
         self.modele.joueurs[self.mon_nom].id_etoile = id
 
+    # Méthode qui affiche les ressources quand une étoile est scannée
     def afficher_ressources(self, id):
         i = 0
         for etoile in self.modele.etoiles:
@@ -329,6 +333,7 @@ class Vue():
             self.champ_population.config(text=("Population : " + str(self.modele.etoiles[i].ressources["population"])), anchor="w", background="light sky blue")
         self.cadre_info_etoile.pack()
 
+    # Méthode qui colonise
     def coloniser(self, evt, id, t):
         self.parent.update_joueur_coloniser(self.mon_nom, "Coloniser")
         i = 0
@@ -950,7 +955,7 @@ class Vue():
             gagnants_str = "Les gagnants à égalité sont"
             i = 0
             for joueur in gagnant:
-                gagnants_str += "   " + joueur
+                gagnants_str += "   " + joueur.nom
                 i += 1
                 if i != len(gagnant):
                     gagnants_str += ","
