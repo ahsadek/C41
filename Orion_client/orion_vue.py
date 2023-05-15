@@ -531,7 +531,7 @@ class Vue():
             # cercle plein petit
             self.canevas.create_oval(i.x + t, i.y + t, i.x - t, i.y - t,
                                      fill=col, outline=col, width=4,
-                                     tags=(i.proprietaire, str(i.id), "Etoile",))
+                                     tags=(i.proprietaire, str(i.id), "Etoile"))
 
             # recuperer dimensions image
             imageEtoile_width = self.imageEtoile.width()
