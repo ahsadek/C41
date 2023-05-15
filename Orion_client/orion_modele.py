@@ -675,16 +675,17 @@ class Modele():
         #### Debut Eric
         joueur_sans_etoile = 0
         joueur_avec_etoile = 0
+        joueur_gagnant = []
         for joueur in self.joueurs:
             if len(self.joueurs[joueur].etoilescontrolees) == 0:
                 joueur_sans_etoile += 1
             else:
-                joueur_gagnant = joueur
+                joueur_gagnant.append(self.joueurs[joueur])
                 joueur_avec_etoile += 1
             
         if joueur_avec_etoile == 1:
             print("Partie finiiiiiiiiiiiiiiiiiieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
-            print("Le joueur " + joueur_gagnant + " a gagné")
+            print("Le joueur " + joueur_gagnant[0].nom + " a gagné")
             self.parent.afficher_fin_jeu(joueur_gagnant)
             self.jeu_actif = False
         #### Fin Eric
