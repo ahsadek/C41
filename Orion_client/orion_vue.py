@@ -377,6 +377,10 @@ class Vue():
             self.parent.ajouter_points(self.mon_nom, 5)
             self.modele.joueurs[self.mon_nom].nbrMetal -= 500
             self.modele.joueurs[self.mon_nom].nbrEnergie -= 1000
+            
+            self.label_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].nbrMetal)))
+            self.label_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].nbrEnergie)))
+            
             for etoile in self.modele.etoiles:
                 if etoile.id == id:
                     etoile.batiments["mines_metaux"].quantite += 1
@@ -397,6 +401,10 @@ class Vue():
             self.parent.ajouter_points(self.mon_nom, 5)
             self.modele.joueurs[self.mon_nom].nbrMetal -= 1000
             self.modele.joueurs[self.mon_nom].nbrEnergie -= 500
+            
+            self.label_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].nbrMetal)))
+            self.label_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].nbrEnergie)))
+            
             for etoile in self.modele.etoiles:
                 if etoile.id == id:
                     etoile.batiments["centrales_electriques"].quantite += 1
@@ -662,6 +670,12 @@ class Vue():
         self.parent.creer_vaisseau(type_vaisseau, self.ma_selection[1])
         self.ma_selection = None
         self.canevas.delete("marqueur")
+        
+        self.modele.joueurs[self.mon_nom].nbrMetal -= 1000
+        self.modele.joueurs[self.mon_nom].nbrEnergie -= 500
+            
+        self.label_metal.config(text=("Metal : " + str(self.modele.joueurs[self.mon_nom].nbrMetal)))
+        self.label_energie.config(text=("Energie : " + str(self.modele.joueurs[self.mon_nom].nbrEnergie)))
         self.cadreinfochoix.pack_forget()
         
     #ajouter un laser a la liste de laser d'un vaisseau
@@ -853,7 +867,6 @@ class Vue():
                     self.btn_attaquer.pack_forget()
                     if self.ma_selection[2] == "Explo":
                         self.btn_scanner.pack()
-
 
             #si on appuie sur un vaisseau ennemi
             if self.ma_selection != None:
